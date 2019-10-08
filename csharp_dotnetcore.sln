@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Bot.Builder.Adapters.WeChat", "libraries\csharp_dotnetcore\Microsoft.Bot.Builder.Adapters.WeChat\Microsoft.Bot.Builder.Adapters.WeChat.csproj", "{D5D41DA1-02EB-4586-BD99-5547D8DED496}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Bot.Builder.Adapters.WeChat.TestBot", "tests\Microsoft.Bot.Builder.Adapters.WeChat.TestBot\Microsoft.Bot.Builder.Adapters.WeChat.TestBot.csproj", "{533DD891-F73E-4FC3-8C4E-059B728843CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Bot.Builder.Adapters.WeChat.Tests", "tests\Microsoft.Bot.Builder.Adapters.WeChat.Tests\Microsoft.Bot.Builder.Adapters.WeChat.Tests.csproj", "{F6B0326D-61C9-4A62-A8C0-B1AB0E4F166E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug - NuGet Packages|Any CPU = Debug - NuGet Packages|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5D41DA1-02EB-4586-BD99-5547D8DED496}.Debug - NuGet Packages|Any CPU.ActiveCfg = Debug - NuGet Packages|Any CPU
+		{D5D41DA1-02EB-4586-BD99-5547D8DED496}.Debug - NuGet Packages|Any CPU.Build.0 = Debug - NuGet Packages|Any CPU
+		{D5D41DA1-02EB-4586-BD99-5547D8DED496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5D41DA1-02EB-4586-BD99-5547D8DED496}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5D41DA1-02EB-4586-BD99-5547D8DED496}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5D41DA1-02EB-4586-BD99-5547D8DED496}.Release|Any CPU.Build.0 = Release|Any CPU
+		{533DD891-F73E-4FC3-8C4E-059B728843CD}.Debug - NuGet Packages|Any CPU.ActiveCfg = Debug|Any CPU
+		{533DD891-F73E-4FC3-8C4E-059B728843CD}.Debug - NuGet Packages|Any CPU.Build.0 = Debug|Any CPU
+		{533DD891-F73E-4FC3-8C4E-059B728843CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{533DD891-F73E-4FC3-8C4E-059B728843CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{533DD891-F73E-4FC3-8C4E-059B728843CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{533DD891-F73E-4FC3-8C4E-059B728843CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6B0326D-61C9-4A62-A8C0-B1AB0E4F166E}.Debug - NuGet Packages|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6B0326D-61C9-4A62-A8C0-B1AB0E4F166E}.Debug - NuGet Packages|Any CPU.Build.0 = Debug|Any CPU
+		{F6B0326D-61C9-4A62-A8C0-B1AB0E4F166E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6B0326D-61C9-4A62-A8C0-B1AB0E4F166E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6B0326D-61C9-4A62-A8C0-B1AB0E4F166E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6B0326D-61C9-4A62-A8C0-B1AB0E4F166E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12DC1128-5FE9-413D-9C11-D2F8885F8219}
+	EndGlobalSection
+EndGlobal
