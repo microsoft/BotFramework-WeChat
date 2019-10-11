@@ -8,7 +8,7 @@ To configure a bot to communicate using WeChat, create a WeChat official account
 
 Document language can only be set before login.
 
- ![change_language](./doc/media/change_language.png)
+ ![change_language](./media/change_language.png)
 
 ## Create an account
 
@@ -34,11 +34,11 @@ You will need to set up appsettings.json before start up the bot, you can find w
 
 If you already have a service account and ready to deploy, then you can find **AppID** , **AppSecret** , **EncodingAESKey** and **Token** in the basic configurations, like below.
 Don't forgot you need to set up the IP white list, otherwise WeChat won't accept your request.
- ![sandbox_account](./doc/media/serviceaccount_console.png)
+ ![sandbox_account](./media/serviceaccount_console.png)
 
 #### Sandbox account
 
- ![sandbox_account](./doc/media/sandbox_account.png)
+ ![sandbox_account](./media/sandbox_account.png)
 
 Sandbox account don't have **EncodingAESKey** , message from WeChat was not encrypted just leave EncodingAESKey blank. You only have three parameters here, **appID** , **appsecret** and **Token**.
 
@@ -61,20 +61,15 @@ Put these code in Startup.cs to inject the WeChat Adapter.
 
 ```csharp
 
-        // Configure background task queue and hosted serivce.
+        // Load WeChat settings.
+        var wechatSettings = new WeChatSettings();
+        Configuration.Bind("WeChatSettings", wechatSettings);
+        services.AddSingleton<WeChatSettings>(wechatSettings);
+
+        // Configure hosted serivce.
         services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
         services.AddHostedService<QueuedHostedService>();
-        services.AddSingleton<IWeChatHttpAdapter>(sp =>
-        {
-            var userState = sp.GetService<UserState>();
-            var conversationState = sp.GetService<ConversationState>();
-            var backgroundTaskQueue = sp.GetService<IBackgroundTaskQueue>();
-            var hostedService = sp.GetService<IHostedService>();
-            var storage = sp.GetService<IStorage>();
-            var adapter = new WeChatHttpAdapter(Configuration, storage, backgroundTaskQueue, hostedService);
-            adapter.Use(new AutoSaveStateMiddleware(userState, conversationState));
-            return adapter;
-        });
+        services.AddSingleton<WeChatAdapterWithErrorHandler>();
 
 ```
 
@@ -101,11 +96,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
 
         [HttpGet("/WeChat")]
         [HttpPost("/WeChat")]
-        public async Task PostWeChatAsync([FromQuery] SecretInfo postModel)
+        public async Task PostWeChatAsync([FromQuery] SecretInfo secretInfo)
         {
             // Delegate the processing of the HTTP POST to the adapter.
             // The adapter will invoke the bot.
-            await _wechatHttpAdapter.ProcessAsync(Request, Response, _bot, postModel, false);
+            await _wechatHttpAdapter.ProcessAsync(Request, Response, _bot, secretInfo);
         }
     }
 }
@@ -116,16 +111,16 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
 
 Start your bot first because WeChat will verify the webhook URL by sending a request.
 
- ![sandbox_account](./doc/media/sandbox_account.png)
+ ![sandbox_account](./media/sandbox_account.png)
 
 ### Subscribe your official account
 
 You can find a QR code to subscribe your test account as in WeChat.
 
- ![subscribe](./doc/media/subscribe.png)
+ ![subscribe](./media/subscribe.png)
 
 ## Test through WeChat
 
 Everything is done, you can try it in your WeChat.
 
- ![chat](./doc/media/chat.png)
+ ![chat](./media/chat.png)

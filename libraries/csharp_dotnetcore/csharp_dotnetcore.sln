@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Bot.Builder.Adapters.WeChat", "libraries\csharp_dotnetcore\Microsoft.Bot.Builder.Adapters.WeChat\Microsoft.Bot.Builder.Adapters.WeChat.csproj", "{D5D41DA1-02EB-4586-BD99-5547D8DED496}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Bot.Builder.Adapters.WeChat", "Microsoft.Bot.Builder.Adapters.WeChat\Microsoft.Bot.Builder.Adapters.WeChat.csproj", "{D5D41DA1-02EB-4586-BD99-5547D8DED496}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Bot.Builder.Adapters.WeChat.TestBot", "tests\Microsoft.Bot.Builder.Adapters.WeChat.TestBot\Microsoft.Bot.Builder.Adapters.WeChat.TestBot.csproj", "{533DD891-F73E-4FC3-8C4E-059B728843CD}"
 EndProject
