@@ -268,7 +268,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         {
             var activity = await _wechatMessageMapper.ToConnectorMessage(wechatRequest).ConfigureAwait(false);
             BotAssert.ActivityNotNull(activity);
-            return ProcessActivityAsync(activity, callback, cancellationToken);
+            return await ProcessActivityAsync(activity, callback, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                         var activities = responses.ContainsKey(key) ? responses[key] : new List<Activity>();
                         if (_settings.PassiveResponseMode)
                         {
-                            return ProcessBotResponse(activities, activity.From.Id);
+                            return await ProcessBotResponse(activities, activity.From.Id).ConfigureAwait(false);
                         }
 
                         // Running a background task, Get bot response and parse it from activity to WeChat response message
