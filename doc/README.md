@@ -4,7 +4,7 @@ You can configure your bot to communicate with people using the WeChat Official 
 
 ## Create a WeChat Account
 
-To configure a bot to communicate using WeChat, you need to create a WeChat official account on [WeChat Official Account Platform](https://mp.weixin.qq.com/?lang=en_US) and then connect the bot to the app.
+To configure a bot to communicate using WeChat, you need to create a WeChat official account on [WeChat Official Account Platform](https://mp.weixin.qq.com/?lang=en_US) and then connect the bot to the app. Currently we only support Service Account.
 
 ### Change Your Prefer Language
 
@@ -12,7 +12,7 @@ You can change the display language you prefer before login.
 
  ![change_language](./media/change_language.png)
 
-### Register a Service Account
+### Register A Service Account
 
 A real service account must be verified by WeChat, you can’t enable webhook before account is verified. To create your own service account, please follow the instruction [Here](https://kf.qq.com/product/weixinmp.html#hid=87).
 For short, just click the Register Now on the top, select the Service Account and follow the instruction.
@@ -25,13 +25,19 @@ If you just want to test the WeChat and bot integration, you can use a sandbox a
 
 [sandbox account](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login)
 
-## Enable WeChat Adapter to bot
+## Enable WeChat Adapter To Bot
 
-### Add reference to WeChat adapter source
+The Bot Project is a regular Bot Framework SDK V4 project. Before you can launch it, you need to make sure you can run the bot.
 
-Please directly reference the WeChat adapter project for now or add ~/BotFramework-WeChat/libraries/csharp_dotnetcore/outputpackages as local NuGet source.
+### Prerequisites
 
-### Inject WeChat adapter in Startup.cs
+    .NET Core SDK (version 2.2.x)
+
+### Add Reference To WeChat Adapter Source
+
+Please directly reference the WeChat adapter project or add ~/BotFramework-WeChat/libraries/csharp_dotnetcore/outputpackages as local NuGet source.
+
+### Inject WeChat Adapter In Your Bot Startup.cs
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -65,7 +71,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-### Put some code in BotController.cs
+### Update Your Bot Controller
 
 ```csharp
 [Route("api/messages")]
@@ -104,37 +110,38 @@ You will need to set up appsettings.json before start up the bot, you can find w
     "EncodingAESKey": "",
     "AppId": "",
     "AppSecret": ""
-  }
+}
 ```
 
-#### Service account
+#### Service Account
 
 If you already have a service account and ready to deploy, then you can find **AppID** , **AppSecret** , **EncodingAESKey** and **Token** in the basic configurations on the left nav bar, like below.
 
 Don't forgot you need to set up the IP white list, otherwise WeChat won't accept your request.
+
  ![serviceaccount_console](./media/serviceaccount_console.png)
 
-#### Sandbox account
+#### Sandbox Account
 
 Sandbox account don't have **EncodingAESKey** , message from WeChat was not encrypted just leave EncodingAESKey blank. You only have three parameters here, **appID** , **appsecret** and **Token**.
 
  ![sandbox_account](./media/sandbox_account.png)
 
-### Start bot and set endpoint URL
+### Start Bot And Set Endpoint URL
 
 Now you can set your bot backend. Before you are doing this, you have to start the bot before you save the settings, WeChat will send you a request to verify the URL.
 Please set the endpoint in such pattern: **https://your_end_point/WeChat**, or set your personal settings the same with what you have done in BotController.cs
 
  ![sandbox_account2](./media/sandbox_account2.png)
 
-### Subscribe your official account
+### Subscribe Your Official Account
 
 You can find a QR code to subscribe your test account as in WeChat.
 
  ![subscribe](./media/subscribe.png)
 
-## Test through WeChat
+## Test Through WeChat
 
-Everything is done, you can try it in your WeChat client.
+Everything is done, you can try it in your WeChat client. You can try our sample bot under tests folder. This sample bot includes wechat adapter and integrated with echo bot and Cards bot.
 
  ![chat](./media/chat.png)
