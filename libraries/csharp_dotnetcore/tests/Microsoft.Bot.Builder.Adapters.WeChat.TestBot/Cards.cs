@@ -67,24 +67,14 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
                     new ReceiptItem(
                         "Data Transfer",
                         price: "$ 38.45",
-                        quantity: "368",
-                        image: new CardImage(url: "https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png")),
+                        quantity: "368"),
                     new ReceiptItem(
                         "App Service",
                         price: "$ 45.00",
-                        quantity: "720",
-                        image: new CardImage(url: "https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png")),
+                        quantity: "720"),
                 },
                 Tax = "$ 7.50",
                 Total = "$ 90.95",
-                Buttons = new List<CardAction>
-                {
-                    new CardAction(
-                        ActionTypes.OpenUrl,
-                        "More information",
-                        "https://account.windowsazure.com/content/6.10.1.38-.8225.160809-1618/aux-pre/images/offer-icon-freetrial.png",
-                        value: "https://azure.microsoft.com/en-us/pricing/"),
-                },
             };
 
             return receiptCard;
@@ -130,18 +120,16 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
                 Title = "Big Buck Bunny",
                 Subtitle = "by the Blender Institute",
                 Text = "Big Buck Bunny (code-named Peach) is a short computer-animated comedy film by the Blender Institute," +
-                       " part of the Blender Foundation. Like the foundation's previous film Elephants Dream," +
-                       " the film was made using Blender, a free software application for animation made by the same foundation." +
-                       " It was released as an open-source film under Creative Commons License Attribution 3.0.",
+                       " part of the Blender Foundation.",
                 Image = new ThumbnailUrl
                 {
-                    Url = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Big_buck_bunny_poster_big.jpg/220px-Big_buck_bunny_poster_big.jpg",
+                    Url = "https://your_video_thumbnail.jpg",
                 },
                 Media = new List<MediaUrl>
                 {
                     new MediaUrl()
                     {
-                        Url = "http://techslides.com/demos/sample-videos/small.mp4",
+                        Url = "http://your_video_content.mp4",
                     },
                 },
                 Buttons = new List<CardAction>
@@ -150,7 +138,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
                     {
                         Title = "Learn More",
                         Type = ActionTypes.OpenUrl,
-                        Value = "https://peach.blender.org/",
+                        Value = "https://your_video_description",
                     },
                 },
             };
@@ -162,18 +150,18 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
         {
             var audioCard = new AudioCard
             {
-                Title = "Haydn_Cello_Concerto_D-1",
-                Subtitle = "Cello Concerto No. 2",
-                Text = "In the first movement of the D Major Concerto, the tone is leisurely and soothing. However, the piece soon enters the development phase, where another theme, building upon the opening theme, is discovered. Finally, the recapitulation returns to the main theme. ",
+                Title = "My Music",
+                Subtitle = "Music Subtitle",
+                Text = "This is my awesome music",
                 Image = new ThumbnailUrl
                 {
-                    Url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gnome-mime-sound-openclipart.svg/50px-Gnome-mime-sound-openclipart.svg.png",
+                    Url = "https://my_awesome_music_thumbnail.jpg",
                 },
                 Media = new List<MediaUrl>
                 {
                     new MediaUrl()
                     {
-                        Url = "http://www.hochmuth.com/mp3/Haydn_Cello_Concerto_D-1.mp3",
+                        Url = "http://my_awesome_music_url",
                     },
                 },
                 Buttons = new List<CardAction>
@@ -182,7 +170,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
                     {
                         Title = "Read More",
                         Type = ActionTypes.OpenUrl,
-                        Value = "https://en.wikipedia.org/wiki/Cello_Concerto_No._2_(Haydn)",
+                        Value = "https://my_awesome_music_description",
                     },
                 },
             };
