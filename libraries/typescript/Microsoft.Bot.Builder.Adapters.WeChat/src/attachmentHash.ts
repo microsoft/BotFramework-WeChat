@@ -19,7 +19,7 @@ export class AttachmentHash {
      * @param bytes Bytes content need to be hashed.
      * @returns  Hash value.
      */
-    computerBytesHash(bytes: Uint8Array): string {
+    computeBytesHash(bytes: Uint8Array): string {
         const result = crypto.createHash('md5').update(bytes).digest('hex');
         return result;
     }
@@ -29,9 +29,9 @@ export class AttachmentHash {
      * @param content String content need to be hashed.
      * @returns  Hash value.
      */
-    computerStringHash(content: string): string {
+    computeStringHash(content: string): string {
         const encoder = new util.TextEncoder();
         const bytes = encoder.encode(content);
-        return this.computerBytesHash(bytes);
+        return this.computeBytesHash(bytes);
     }
 }

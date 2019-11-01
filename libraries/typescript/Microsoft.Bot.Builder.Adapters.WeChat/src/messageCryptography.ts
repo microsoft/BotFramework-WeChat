@@ -7,7 +7,7 @@
  */
 
 import { SecretInfo } from './weChatSchema';
-import { VerificationHelper } from './VerificationHelper';
+import { VerificationHelper } from './verificationHelper';
 import * as crypto from 'crypto';
 
 /**

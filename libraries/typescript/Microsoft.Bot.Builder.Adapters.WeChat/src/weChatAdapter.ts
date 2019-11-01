@@ -12,7 +12,7 @@ import { WeChatClient } from './weChatClient';
 import { IRequestMessageBase, SecretInfo, IResponseMessageBase, ResponseMessageTypes, TextResponse, ImageResponse, NewsResponse, MusicResponse, MPNewsResponse, VideoResponse, VoiceResponse, UploadMediaResult, MessageMenuResponse } from './weChatSchema';
 import { WeChatMessageMapper } from './weChatMessageMapper';
 import * as xml2js from 'xml2js';
-import { VerificationHelper } from './VerificationHelper';
+import { VerificationHelper } from './verificationHelper';
 import { MessageCryptography } from './messageCryptography';
 
 /**
@@ -113,12 +113,7 @@ export class WeChatAdapter extends BotAdapter {
         const key = `${ activity.conversation.id }:${ activity.id }`;
         try {
             let activities: any;
-            const test = responses.has(key);
-            if (test) {
-                activities = responses.get(key);
-            } else {
-                activities = new Array<Activity>();
-            }
+            activities = responses.has(key) ? responses.get(key) : new Array<Activity>();
             const response = await this.ProcessBotResponse(activities, wechatRequest.FromUserName, passiveResponse);
             return response;
         } catch (e) {

@@ -47,7 +47,7 @@ export class WeChatClient {
      * @returns  Result of upload a temporary news.
      */
     public async UploadNewsAsync(newsList: News[], isTemporary: boolean, timeout = 30000): Promise<UploadMediaResult> {
-        const mediaHash = this.AttachmentHash.computerStringHash(JSON.stringify(newsList)) + isTemporary;
+        const mediaHash = this.AttachmentHash.computeStringHash(JSON.stringify(newsList)) + isTemporary;
         const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
         const accessToken = await this.GetAccessTokenAsync();
         const url = this.GetUploadNewsEndPoint(accessToken, isTemporary);
@@ -57,12 +57,7 @@ export class WeChatClient {
             };
             const result = await this.SendHttpRequestAsync('POST', url, data, undefined, timeout);
             let uploadResult: any;
-            if (isTemporary) {
-                uploadResult = new UploadTemporaryMediaResult(result);
-            } else {
-                uploadResult = new UploadPersistentMediaResult(result);
-            }
-
+            uploadResult = isTemporary ? new UploadTemporaryMediaResult(result) : new UploadPersistentMediaResult(result);
             await this.CheckAndUpdateAttachmentStorage(mediaHash, uploadResult);
             return uploadResult;
         }
@@ -76,7 +71,7 @@ export class WeChatClient {
      * @returns  Result of upload persistent media.
      */
     public async UploadNewsImageAsync(attachmentData: AttachmentData, timeout = 30000): Promise<UploadMediaResult> {
-        const mediaHash = this.AttachmentHash.computerBytesHash(attachmentData.originalBase64);
+        const mediaHash = this.AttachmentHash.computeBytesHash(attachmentData.originalBase64);
         const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
         if (cacheResult === undefined || cacheResult.Expired) {
             const accessToken = await this.GetAccessTokenAsync();
@@ -96,7 +91,7 @@ export class WeChatClient {
      * @returns  Result of upload Temporary media.
      */
     public async UploadMediaAsync(attachmentData: AttachmentData, isTemporary: boolean, timeout = 30000): Promise<UploadMediaResult> {
-        const mediaHash = this.AttachmentHash.computerBytesHash(attachmentData.originalBase64) + isTemporary;
+        const mediaHash = this.AttachmentHash.computeBytesHash(attachmentData.originalBase64) + isTemporary;
         const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
         const accessToken = await this.GetAccessTokenAsync();
         const url = this.GetUploadMediaEndPoint(accessToken, attachmentData.type, isTemporary);
@@ -597,11 +592,7 @@ export class WeChatClient {
     /**
      * Private method to get upload media endpoint.
      */
-    private GetUploadMediaEndPoint(
-        accessToken: string,
-        type: string,
-        isTemporaryMeida: boolean
-    ) {
+    private GetUploadMediaEndPoint(accessToken: string, type: string, isTemporaryMeida: boolean) {
         if (isTemporaryMeida) {
             return `${ this.ApiHost }/cgi-bin/media/upload?access_token=${ accessToken }&type=${ type }`;
         }

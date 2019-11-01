@@ -562,10 +562,10 @@ function CreateMediaResponse(activity: IActivity, mediaId: string, type: string)
     if (type.includes(MediaTypes.Audio)) {
         response = new VoiceResponse(mediaId);
     }
-    SetCommenField(response, activity);
-    if (response === undefined) {
+    if (!response) {
         throw new Error('The media type is not supported by Wechat');
     }
+    SetCommenField(response, activity);
     return response;
 }
 
