@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^10.12.18",
     "@azure/ms-rest-js": "1.2.6",
     "botbuilder-core": "^4.5.3",
     "node-fetch": "^2.2.1",
@@ -18,7 +19,6 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
-    "codelyzer": "^4.1.0",
     "dotenv": "^5.0.1",
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",

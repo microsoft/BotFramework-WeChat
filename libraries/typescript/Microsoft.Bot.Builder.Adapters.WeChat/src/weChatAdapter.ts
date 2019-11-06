@@ -111,14 +111,10 @@ export class WeChatAdapter extends BotAdapter {
         context.turnState.set(this.TurnResponseKey, responses);
         await this.runMiddleware(context, logic);
         const key = `${ activity.conversation.id }:${ activity.id }`;
-        try {
-            let activities: any;
-            activities = responses.has(key) ? responses.get(key) : new Array<Activity>();
-            const response = await this.ProcessBotResponse(activities, wechatRequest.FromUserName, passiveResponse);
-            return response;
-        } catch (e) {
-            throw e;
-        }
+        let activities: any;
+        activities = responses.has(key) ? responses.get(key) : new Array<Activity>();
+        const response = await this.ProcessBotResponse(activities, wechatRequest.FromUserName, passiveResponse);
+        return response;
     }
 
     /**
@@ -180,19 +176,19 @@ export class WeChatAdapter extends BotAdapter {
      * @returns Process activity result.
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>, secretInfo: SecretInfo, passiveResponse: boolean): Promise<void> {
-        if (req === undefined) {
+        if (!req) {
             throw new Error(`ArgumentNullException - Request is invalid.`);
         }
 
-        if (res === undefined) {
+        if (!res) {
             throw new Error(`ArgumentNullException - Response is invalid.`);
         }
 
-        if (logic === undefined) {
+        if (!logic) {
             throw new Error(`ArgumentNullException - Bot logic is invalid.`);
         }
 
-        if (secretInfo === undefined) {
+        if (!secretInfo) {
             throw new Error(`ArgumentNullException - Secret information is invalid.`);
         }
 
@@ -204,18 +200,13 @@ export class WeChatAdapter extends BotAdapter {
         secretInfo.EncodingAesKey = this.settings.EncodingAESKey;
         secretInfo.AppId = this.settings.AppId;
         const weChatRequest = await parseRequest(req, secretInfo);
-
-        try {
-            if (!passiveResponse) {
-                this.ProcessWeChatRequest(weChatRequest, logic, passiveResponse);
-                // Return status
-                res.status(200);
-                res.end();
-            } else {
-                // TODO: Passive reply
-            }
-        } catch (err) {
-            throw err;
+        if (!passiveResponse) {
+            this.ProcessWeChatRequest(weChatRequest, logic, passiveResponse);
+            // Return status
+            res.status(200);
+            res.end();
+        } else {
+            // TODO: Passive reply
         }
     }
 
@@ -230,8 +221,8 @@ export class WeChatAdapter extends BotAdapter {
     private async ProcessBotResponse(activities: Activity[], openId: string, passiveResponse: boolean): Promise<any> {
         let response: any;
         for (const activity of activities) {
-            if (activity !== undefined && activity.type === ActivityTypes.Message) {
-                if (activity.channelData !== undefined) {
+            if (activity && activity.type === ActivityTypes.Message) {
+                if (activity.channelData) {
                     if (passiveResponse) {
                         response = activity.channelData;
                     } else {
@@ -256,11 +247,7 @@ export class WeChatAdapter extends BotAdapter {
      * @returns  Task running result.
      */
     private async SendChannelDataToWeChat(channelData: any) {
-        try {
-            await this.weChatClient.SendMessageToUser(channelData);
-        } catch (e) {
-            throw e;
-        }
+        await this.weChatClient.SendMessageToUser(channelData);
     }
 
     /**
@@ -271,77 +258,73 @@ export class WeChatAdapter extends BotAdapter {
      */
     private async SendMessageToWeChat(responseList: IResponseMessageBase[], openId: string) {
         for (const response of responseList) {
-            try {
-                switch (response.MsgType) {
-                    case ResponseMessageTypes.Text:
-                        const textResponse = response as TextResponse;
-                        await this.weChatClient.SendTextAsync(
-                            openId,
-                            textResponse.Content
-                        );
-                        break;
-                    case ResponseMessageTypes.Image:
-                        const imageResponse = response as ImageResponse;
-                        await this.weChatClient.SendImageAsync(
-                            openId,
-                            imageResponse.image.MediaId
-                        );
-                        break;
-                    case ResponseMessageTypes.News:
-                        const newsResponse = response as NewsResponse;
-                        await this.weChatClient.SendNewsAsync(
-                            openId,
-                            newsResponse.Articles
-                        );
-                        break;
-                    case ResponseMessageTypes.Music:
-                        const musicResponse = response as MusicResponse;
-                        const music = musicResponse.Music;
-                        await this.weChatClient.SendMusicAsync(
-                            openId,
-                            music.Title,
-                            music.Description,
-                            music.MusicUrl,
-                            music.HQMusicUrl,
-                            music.ThumbMediaId
-                        );
-                        break;
-                    case ResponseMessageTypes.MPNews:
-                        const mpnewsResponse = response as MPNewsResponse;
-                        await this.weChatClient.SendMPNewsAsync(
-                            openId,
-                            mpnewsResponse.MediaId
-                        );
-                        break;
-                    case ResponseMessageTypes.Video:
-                        const videoRespones = response as VideoResponse;
-                        const video = videoRespones.Video;
-                        await this.weChatClient.SendVideoAsync(
-                            openId,
-                            video.MediaId,
-                            video.Title,
-                            video.Description
-                        );
-                        break;
-                    case ResponseMessageTypes.Voice:
-                        const voiceResponse = response as VoiceResponse;
-                        await this.weChatClient.SendVoiceAsync(
-                            openId,
-                            voiceResponse.Voice.MediaId
-                        );
-                        break;
-                    case ResponseMessageTypes.MessageMenu:
-                        const menuResponse = response as MessageMenuResponse;
-                        await this.weChatClient.SendMessageMenuAsync(openId, menuResponse.MessageMenu);
-                    case ResponseMessageTypes.LocationMessage:
-                    case ResponseMessageTypes.SuccessResponse:
-                    case ResponseMessageTypes.Unknown:
-                    case ResponseMessageTypes.NoResponse:
-                    default:
-                        break;
-                }
-            } catch (e) {
-                throw e;
+            switch (response.MsgType) {
+                case ResponseMessageTypes.Text:
+                    const textResponse = response as TextResponse;
+                    await this.weChatClient.SendTextAsync(
+                        openId,
+                        textResponse.Content
+                    );
+                    break;
+                case ResponseMessageTypes.Image:
+                    const imageResponse = response as ImageResponse;
+                    await this.weChatClient.SendImageAsync(
+                        openId,
+                        imageResponse.image.MediaId
+                    );
+                    break;
+                case ResponseMessageTypes.News:
+                    const newsResponse = response as NewsResponse;
+                    await this.weChatClient.SendNewsAsync(
+                        openId,
+                        newsResponse.Articles
+                    );
+                    break;
+                case ResponseMessageTypes.Music:
+                    const musicResponse = response as MusicResponse;
+                    const music = musicResponse.Music;
+                    await this.weChatClient.SendMusicAsync(
+                        openId,
+                        music.Title,
+                        music.Description,
+                        music.MusicUrl,
+                        music.HQMusicUrl,
+                        music.ThumbMediaId
+                    );
+                    break;
+                case ResponseMessageTypes.MPNews:
+                    const mpnewsResponse = response as MPNewsResponse;
+                    await this.weChatClient.SendMPNewsAsync(
+                        openId,
+                        mpnewsResponse.MediaId
+                    );
+                    break;
+                case ResponseMessageTypes.Video:
+                    const videoRespones = response as VideoResponse;
+                    const video = videoRespones.Video;
+                    await this.weChatClient.SendVideoAsync(
+                        openId,
+                        video.MediaId,
+                        video.Title,
+                        video.Description
+                    );
+                    break;
+                case ResponseMessageTypes.Voice:
+                    const voiceResponse = response as VoiceResponse;
+                    await this.weChatClient.SendVoiceAsync(
+                        openId,
+                        voiceResponse.Voice.MediaId
+                    );
+                    break;
+                case ResponseMessageTypes.MessageMenu:
+                    const menuResponse = response as MessageMenuResponse;
+                    await this.weChatClient.SendMessageMenuAsync(openId, menuResponse.MessageMenu);
+                case ResponseMessageTypes.LocationMessage:
+                case ResponseMessageTypes.SuccessResponse:
+                case ResponseMessageTypes.Unknown:
+                case ResponseMessageTypes.NoResponse:
+                default:
+                    break;
             }
         }
     }
@@ -355,7 +338,7 @@ export class WeChatAdapter extends BotAdapter {
  */
 async function parseRequest(req: WebRequest, secretInfo: SecretInfo): Promise<IRequestMessageBase> {
     const requestRaw = await parseXML(req.body);
-    if (requestRaw.Encrypt === undefined) {
+    if (!requestRaw.Encrypt) {
         return requestRaw;
     } else {
         const requestMessage = await parseXML(MessageCryptography.DecryptMessage(requestRaw, secretInfo));

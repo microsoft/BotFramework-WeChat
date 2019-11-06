@@ -51,7 +51,7 @@ export class WeChatClient {
         const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
         const accessToken = await this.GetAccessTokenAsync();
         const url = this.GetUploadNewsEndPoint(accessToken, isTemporary);
-        if (cacheResult === undefined || cacheResult.Expired) {
+        if (!cacheResult || cacheResult.Expired) {
             const data = {
                 articles: newsList
             };
@@ -73,7 +73,7 @@ export class WeChatClient {
     public async UploadNewsImageAsync(attachmentData: AttachmentData, timeout = 30000): Promise<UploadMediaResult> {
         const mediaHash = this.AttachmentHash.computeBytesHash(attachmentData.originalBase64);
         const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
-        if (cacheResult === undefined || cacheResult.Expired) {
+        if (!cacheResult || cacheResult.Expired) {
             const accessToken = await this.GetAccessTokenAsync();
             const url = this.GetAcquireMediaUrlEndPoint(accessToken);
             const uploadResult = await this.ProcessUploadMediaAsync(attachmentData, url, false, timeout);
@@ -95,7 +95,7 @@ export class WeChatClient {
         const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
         const accessToken = await this.GetAccessTokenAsync();
         const url = this.GetUploadMediaEndPoint(accessToken, attachmentData.type, isTemporary);
-        if (cacheResult === undefined || cacheResult.Expired) {
+        if (!cacheResult || cacheResult.Expired) {
             const uploadResult = await this.ProcessUploadMediaAsync(attachmentData, url, isTemporary, timeout);
             await this.CheckAndUpdateAttachmentStorage(mediaHash, uploadResult);
             return uploadResult;
@@ -218,7 +218,7 @@ export class WeChatClient {
         customerServiceAccount: string = undefined
     ): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.Image,
@@ -257,7 +257,7 @@ export class WeChatClient {
         customerServiceAccount: string = undefined
     ): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.MPNews,
@@ -303,7 +303,7 @@ export class WeChatClient {
         customerServiceAccount: string = undefined
     ): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.Music,
@@ -349,7 +349,7 @@ export class WeChatClient {
         customerServiceAccount: string = undefined
     ): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.News,
@@ -387,7 +387,7 @@ export class WeChatClient {
         customerServiceAccount: string = undefined
     ): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.Text,
@@ -431,7 +431,7 @@ export class WeChatClient {
         thumbMeidaId: string = undefined
     ): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.Video,
@@ -470,7 +470,7 @@ export class WeChatClient {
      */
     public async SendVoiceAsync(openId: string, mediaId: string, timeout = 10000, customerServiceAccount: string = undefined): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.Voice,
@@ -503,7 +503,7 @@ export class WeChatClient {
      */
     public async SendMessageMenuAsync(openId: string, messageMenu: MessageMenu, timeout = 10000, customerServiceAccount: string = undefined): Promise<WeChatJsonResult> {
         let data: any;
-        if (customerServiceAccount === undefined) {
+        if (!customerServiceAccount) {
             data = {
                 touser: openId,
                 msgtype: ResponseMessageTypes.MessageMenu,
@@ -531,30 +531,26 @@ export class WeChatClient {
      * @returns Uploaded result from WeChat.
      */
     private async ProcessUploadMediaAsync(attachmentData: AttachmentData, url: string, isTemporaryMeida: boolean, timeout = 10000): Promise<UploadMediaResult> {
-        try {
-            let form = new FormData();
-            let headers: any;
-            const ext = this.GetMediaExtension(attachmentData.type);
-            form.append('media', Buffer.from(attachmentData.originalBase64), {
-                contentType: attachmentData.type,
-                filename: attachmentData.name + ext,
-                knownLength: attachmentData.originalBase64.byteLength,
+        let form = new FormData();
+        let headers: any;
+        const ext = this.GetMediaExtension(attachmentData.type);
+        form.append('media', Buffer.from(attachmentData.originalBase64), {
+            contentType: attachmentData.type,
+            filename: attachmentData.name + ext,
+            knownLength: attachmentData.originalBase64.byteLength,
+        });
+        if (!isTemporaryMeida && attachmentData.type.includes(MediaTypes.Video)) {
+            form.append('description', {
+                title: 'video',
+                introduction: 'INTRODUCTION'
             });
-            if (!isTemporaryMeida && attachmentData.type.includes(MediaTypes.Video)) {
-                form.append('description', {
-                    title: 'video',
-                    introduction: 'INTRODUCTION'
-                });
-            }
-            headers = { 'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}` };
-            const response = await this.SendHttpRequestAsync('POST', url, form, headers, timeout);
-            if (isTemporaryMeida) {
-                return new UploadTemporaryMediaResult(response);
-            } else {
-                return new UploadPersistentMediaResult(response);
-            }
-        } catch (e) {
-            throw e;
+        }
+        headers = { 'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}` };
+        const response = await this.SendHttpRequestAsync('POST', url, form, headers, timeout);
+        if (isTemporaryMeida) {
+            return new UploadTemporaryMediaResult(response);
+        } else {
+            return new UploadPersistentMediaResult(response);
         }
     }
 

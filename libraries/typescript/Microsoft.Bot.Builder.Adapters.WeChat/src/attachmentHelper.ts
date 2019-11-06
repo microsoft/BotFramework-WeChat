@@ -19,9 +19,11 @@ export class AttachmentHelper {
      */
     public static IsUrl(content: any): boolean {
         if (typeof content === 'string') {
-            const url = content;
-            if (url.startsWith('http') || url.startsWith('https')) {
+            try {
+                new URL(content);
                 return true;
+            } catch (_) {
+                return false;
             }
         }
         return false;

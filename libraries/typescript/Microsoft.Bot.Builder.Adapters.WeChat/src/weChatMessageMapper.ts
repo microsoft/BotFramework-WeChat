@@ -107,56 +107,52 @@ export class WeChatMessageMapper {
      * @returns  WeChat message list.
      */
     public async ToWeChatMessage(activity: IActivity): Promise<IResponseMessageBase[]> {
-        try {
-            let responseMessageList: IResponseMessageBase[] = [];
-            if (activity.type === ActivityTypes.Message) {
-                const messageActivity = activity as IMessageActivity;
-                if (messageActivity.text) {
-                    responseMessageList = responseMessageList.concat(CreateTextResponseFromMessageActivity(messageActivity));
-                }
-                if (messageActivity.suggestedActions && messageActivity.suggestedActions.actions) {
-                    responseMessageList = responseMessageList.concat(ProcessCardActions(messageActivity, messageActivity.suggestedActions.actions));
-                }
-                for (const attachment of (messageActivity.attachments || Array<Attachment>())) {
-                    switch (attachment.contentType) {
-                        // TODO: Adaptive Card JavaScript problem
-                        /* case CardFactory.contentTypes.adaptiveCard:
-                            responseMessageList = responseMessageList.concat(await this.ProcessAdaptiveCardAsync(messageActivity, attachment));
-                            break; */
-                        case CardFactory.contentTypes.animationCard:
-                        case CardFactory.contentTypes.audioCard:
-                        case CardFactory.contentTypes.videoCard:
-                            responseMessageList = responseMessageList.concat(await this.ProcessMediaCardAsync(messageActivity, attachment));
-                            break;
-                        case CardFactory.contentTypes.heroCard:
-                            responseMessageList = responseMessageList.concat(await this.ProcessHeroCardAsync(messageActivity, attachment));
-                            break;
-                        case CardFactory.contentTypes.thumbnailCard:
-                            responseMessageList = responseMessageList.concat(ProcessThumbnailCard(messageActivity, attachment));
-                            break;
-                        case CardFactory.contentTypes.signinCard:
-                            responseMessageList = responseMessageList.concat(ProcessSigninCard(messageActivity, attachment));
-                            break;
-                        case CardFactory.contentTypes.receiptCard:
-                            responseMessageList = responseMessageList.concat(ProcessReceiptCard(messageActivity, attachment));
-                            break;
-                        case CardFactory.contentTypes.oauthCard:
-                            responseMessageList = responseMessageList.concat(ProcessOAuthCard(messageActivity, attachment));
-                            break;
-                        default:
-                            if (attachment && (attachment.contentUrl || attachment.content || attachment.thumbnailUrl)) {
-                                responseMessageList = responseMessageList.concat(await this.ProcessAttachmentAsync(messageActivity, attachment));
-                            }
-                            break;
-                    }
-                }
-            } else if (activity.type === ActivityTypes.Event) {
-                // WeChat won't accept event type, just bypass.
+        let responseMessageList: IResponseMessageBase[] = [];
+        if (activity.type === ActivityTypes.Message) {
+            const messageActivity = activity as IMessageActivity;
+            if (messageActivity.text) {
+                responseMessageList = responseMessageList.concat(CreateTextResponseFromMessageActivity(messageActivity));
             }
-            return responseMessageList;
-        } catch (e) {
-            throw e;
+            if (messageActivity.suggestedActions && messageActivity.suggestedActions.actions) {
+                responseMessageList = responseMessageList.concat(ProcessCardActions(messageActivity, messageActivity.suggestedActions.actions));
+            }
+            for (const attachment of (messageActivity.attachments || Array<Attachment>())) {
+                switch (attachment.contentType) {
+                    // TODO: Adaptive Card JavaScript problem
+                    /* case CardFactory.contentTypes.adaptiveCard:
+                        responseMessageList = responseMessageList.concat(await this.ProcessAdaptiveCardAsync(messageActivity, attachment));
+                        break; */
+                    case CardFactory.contentTypes.animationCard:
+                    case CardFactory.contentTypes.audioCard:
+                    case CardFactory.contentTypes.videoCard:
+                        responseMessageList = responseMessageList.concat(await this.ProcessMediaCardAsync(messageActivity, attachment));
+                        break;
+                    case CardFactory.contentTypes.heroCard:
+                        responseMessageList = responseMessageList.concat(await this.ProcessHeroCardAsync(messageActivity, attachment));
+                        break;
+                    case CardFactory.contentTypes.thumbnailCard:
+                        responseMessageList = responseMessageList.concat(ProcessThumbnailCard(messageActivity, attachment));
+                        break;
+                    case CardFactory.contentTypes.signinCard:
+                        responseMessageList = responseMessageList.concat(ProcessSigninCard(messageActivity, attachment));
+                        break;
+                    case CardFactory.contentTypes.receiptCard:
+                        responseMessageList = responseMessageList.concat(ProcessReceiptCard(messageActivity, attachment));
+                        break;
+                    case CardFactory.contentTypes.oauthCard:
+                        responseMessageList = responseMessageList.concat(ProcessOAuthCard(messageActivity, attachment));
+                        break;
+                    default:
+                        if (attachment && (attachment.contentUrl || attachment.content || attachment.thumbnailUrl)) {
+                            responseMessageList = responseMessageList.concat(await this.ProcessAttachmentAsync(messageActivity, attachment));
+                        }
+                        break;
+                }
+            }
+        } else if (activity.type === ActivityTypes.Event) {
+            // WeChat won't accept event type, just bypass.
         }
+        return responseMessageList;
     }
 
     /**
@@ -202,7 +198,7 @@ export class WeChatMessageMapper {
     }
 
     private async CreateNewsFromHeroCard(activity: IMessageActivity, heroCard: HeroCard): Promise<News> {
-        if (heroCard.images === undefined || heroCard.images.length === 0) {
+        if (!heroCard.images || heroCard.images.length === 0) {
             throw new Error('Image is required for news.');
         }
         const news = {
@@ -318,10 +314,10 @@ export class WeChatMessageMapper {
      * @returns  A valid AttachmentData instance.
      */
     private async CreateAttachmentDataAsync(name: string, content: string, contentType: string): Promise<AttachmentData> {
-        if (contentType === undefined) {
+        if (!contentType) {
             throw new Error('Content type can not be null.');
         }
-        if (content === undefined) {
+        if (!content) {
             throw new Error('Content url can not be null.');
         }
         let data: any;
@@ -501,7 +497,7 @@ function ProcessSigninCard(activity: IMessageActivity, attachment: Attachment): 
  */
 function GetMessages(activity: IMessageActivity, text: string) {
     const messages: IResponseMessageBase[] = [];
-    if (text === undefined) {
+    if (!text) {
         return messages;
     }
     const textResponse = CreateTextResponseFromMessageActivity(activity);
@@ -660,7 +656,7 @@ function ProcessCardActions(activity: IMessageActivity, actions: CardAction[]): 
         messages.push(menuResponse);
     }
 
-    if (text !== undefined) {
+    if (text) {
         const textResponse = CreateTextResponseFromMessageActivity(activity);
         textResponse.Content = text;
         messages.push(textResponse);
