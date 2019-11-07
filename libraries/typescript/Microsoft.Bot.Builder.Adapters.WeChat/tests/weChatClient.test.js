@@ -26,7 +26,7 @@ const TokenResult = {
 };
 const MockAttachmentData = {
     name: 'tempImage',
-    type: 'image/png',
+    type: 'image/jpeg',
     originalBase64: new TextEncoder().encode(ImageDataUrl),
     thumbnailBase64: new TextEncoder().encode(ImageDataUrl)
 };

@@ -20,13 +20,13 @@ export class VerificationHelper {
      * @returns Signature verification result.
      */
     public static VerifySignature(signature: string, timestamp: string, nonce: string, token: string = null, postBody: string = null): boolean {
-        if (signature === undefined) {
+        if (!signature) {
             throw new Error('ArgumentNullException - Request validation failed - null Signature');
         }
-        if (timestamp === undefined) {
+        if (!timestamp) {
             throw new Error('ArgumentNullException - Request validation failed - null Timestamp');
         }
-        if (nonce === undefined) {
+        if (!nonce) {
             throw new Error('ArgumentNullException - Request validation failed - null Nonce');
         }
         return signature === GenerateSignature(token, timestamp, nonce, postBody);

@@ -19,6 +19,9 @@ export class AttachmentHelper {
      */
     public static IsUrl(content: any): boolean {
         if (typeof content === 'string') {
+            if (content.startsWith('data:')){
+                return false;
+            }
             try {
                 new URL(content);
                 return true;
