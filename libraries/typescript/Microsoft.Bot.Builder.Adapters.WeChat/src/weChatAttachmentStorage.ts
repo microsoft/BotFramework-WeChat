@@ -1,5 +1,5 @@
 /**
- * @module wechat
+ * @module botframework-wechat
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,16 +11,17 @@ import { UploadMediaResult } from './weChatSchema';
 
 /**
  * We chat attachment storage
+ * @private
  */
 export class WeChatAttachmentStorage {
-    private Storage: Storage;
+    private storage: Storage;
 
     /**
      * Creates an instance of we chat attachment storage.
      * @param storage
      */
     constructor(storage: Storage) {
-        this.Storage = storage;
+        this.storage = storage;
     }
 
     /**
@@ -28,20 +29,20 @@ export class WeChatAttachmentStorage {
      * @param key Item key to write to the storage.
      * @param value Item value to write to the storage.
      */
-    async SaveAsync(key: string, value: UploadMediaResult): Promise<void> {
+    async saveAsync(key: string, value: UploadMediaResult): Promise<void> {
         const dict: StoreItems = {
             [key]: value,
         };
-        await this.Storage.write(dict);
+        await this.storage.write(dict);
     }
 
     /**
      * Loads store items from storage.
      * @param key Item key to read from the store.
      */
-    async GetAsync(key: string): Promise<UploadMediaResult> {
+    async getAsync(key: string): Promise<UploadMediaResult> {
         const keys: string[] = [key];
-        const result: StoreItems = await this.Storage.read(keys);
+        const result: StoreItems = await this.storage.read(keys);
         const weChatResult: UploadMediaResult = result[key];
         return weChatResult;
     }
@@ -50,8 +51,8 @@ export class WeChatAttachmentStorage {
      * Removes store items from storage.
      * @param key Item key to remove from the store.
      */
-    async DeleteAsync(key: string): Promise<void> {
+    async deleteAsync(key: string): Promise<void> {
         const keys: string[] = [key];
-        await this.Storage.delete(keys);
+        await this.storage.delete(keys);
     }
 }

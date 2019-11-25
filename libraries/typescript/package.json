@@ -3,6 +3,7 @@
   "name": "wechat-packages",
   "scripts": {
     "postinstall": "lerna bootstrap --hoist && lerna run build",
+    "build": "lerna run build",
     "clean": "lerna run clean",
     "test": "lerna run build && nyc mocha \"Microsoft.Bot.Builder.Adapters.WeChat/tests/*.test.js\"",
     "test-coverage": "nyc mocha \"Microsoft.Bot.Builder.Adapters.WeChat/tests/*.test.js\"",

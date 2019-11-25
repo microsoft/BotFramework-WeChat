@@ -1,5 +1,5 @@
 /**
- * @module wechat
+ * @module botframework-wechat
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,16 +11,17 @@ import { WeChatAccessToken } from './weChatSchema';
 
 /**
  * Storage provider for access token.
+ * @private
  */
 export class AccessTokenStorage {
-    private Storage: Storage;
+    private storage: Storage;
 
     /**
      * Creates an instance of access token storage.
      * @param storage
      */
     constructor(storage: Storage) {
-        this.Storage = storage;
+        this.storage = storage;
     }
 
     /**
@@ -28,32 +29,27 @@ export class AccessTokenStorage {
      * @param key Item key to write to the storage.
      * @param value Item value to write to the storage.
      */
-    public async SaveAsync(key: string, value: WeChatAccessToken): Promise<void> {
+    public async saveAsync(key: string, value: WeChatAccessToken): Promise<void> {
         const dict: StoreItems = {
             [key]: value
         };
-        await this.Storage.write(dict);
+        await this.storage.write(dict);
     }
 
     /**
      * Loads store items from storage.
      * @param key Item key to read from the store.
      */
-    public async GetAsync(key: string): Promise<WeChatAccessToken> {
-        const result: StoreItems = await this.Storage.read([key]);
-        if (result[key] === undefined) {
-            return result[key];
-        } else {
-            const weChatResult = new WeChatAccessToken(result[key]);
-            return weChatResult;
-        }
+    public async getAsync(key: string): Promise<WeChatAccessToken | undefined> {
+        const result: StoreItems = await this.storage.read([key]);
+        return result[key] as WeChatAccessToken;
     }
 
     /**
      * Removes store items from storage.
      * @param key Item key to remove from the store.
      */
-    public async DeleteAsync(key: string): Promise<void> {
-        await this.Storage.delete([key]);
+    public async deleteAsync(key: string): Promise<void> {
+        await this.storage.delete([key]);
     }
 }

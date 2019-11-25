@@ -1,5 +1,5 @@
 /**
- * @module wechat
+ * @module botframework-wechat
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,6 +11,7 @@ import * as util from 'util';
 
 /**
  * Attachment hash
+ * @private
  */
 export class AttachmentHash {
 

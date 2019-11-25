@@ -1,5 +1,5 @@
 /**
- * @module wechat
+ * @module botframework-wechat
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,7 +19,7 @@ export class VerificationHelper {
      * @param [postBody] Request body as string.
      * @returns Signature verification result.
      */
-    public static VerifySignature(signature: string, timestamp: string, nonce: string, token: string = null, postBody: string = null): boolean {
+    public static verifySignature(signature: string, timestamp: string, nonce: string, token: string = null, postBody: string = null): boolean {
         if (!signature) {
             throw new Error('ArgumentNullException - Request validation failed - null Signature');
         }
@@ -29,7 +29,7 @@ export class VerificationHelper {
         if (!nonce) {
             throw new Error('ArgumentNullException - Request validation failed - null Nonce');
         }
-        return signature === GenerateSignature(token, timestamp, nonce, postBody);
+        return signature === generateSignature(token, timestamp, nonce, postBody);
     }
 }
 
@@ -42,7 +42,7 @@ export class VerificationHelper {
  * @param [encryptedMessage] The encrypted message content from WeChat request.
  * @returns Generated signature.
  */
-function GenerateSignature(token: string, timestamp: string, nonce: string, encryptedMessage: string = null): string {
+function generateSignature(token: string, timestamp: string, nonce: string, encryptedMessage: string = null): string {
     const sortlist = [token, timestamp, nonce, encryptedMessage];
     sortlist.sort();
     const raw = sortlist.join('');

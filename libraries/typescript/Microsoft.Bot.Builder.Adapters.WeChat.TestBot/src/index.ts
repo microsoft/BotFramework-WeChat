@@ -7,7 +7,7 @@ import * as restify from 'restify';
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
 import { ConversationState, MemoryStorage, UserState } from 'botbuilder';
-import { SecretInfo, VerificationHelper, WeChatAdapter } from 'wechat';
+import { SecretInfo, VerificationHelper, WeChatAdapter } from 'botframework-wechat';
 import { RichCardsBot } from './bots/richCardsBot';
 
 import { MainDialog } from './dialogs/mainDialog';
@@ -79,14 +79,7 @@ server.post('/WeChat', (req, res) => {
 
 server.get('/WeChat', (req, res) => {
     const echostr: string = req.query.echostr;
-    if (
-        VerificationHelper.VerifySignature(
-            req.query.signature,
-            req.query.timestamp,
-            req.query.nonce,
-            process.env.Token
-        )
-    ) {
+    if (VerificationHelper.verifySignature(req.query.signature, req.query.timestamp, req.query.nonce, process.env.Token)) {
         res.statusCode = 200;
         res.contentType = 'text/plain; charset=utf-8';
         res.send(echostr);

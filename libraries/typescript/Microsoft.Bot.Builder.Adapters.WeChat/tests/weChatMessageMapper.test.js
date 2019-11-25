@@ -165,6 +165,7 @@ describe('WeChat Message Mapper', () => {
                 assert.equal(activity.id, request.MsgId);
             } else {
                 assert(request.MsgType === 'event', 'The message type should be Event');
+                assert.equal(activity.name, request.Event);
             }
             assert.equal(activity.channelId, 'wechat');
             assert.equal(activity.conversation.id, request.FromUserName);

@@ -1,5 +1,5 @@
 /**
- * @module wechat
+ * @module botframework-wechat
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,19 +46,19 @@ export class WeChatClient {
      * @param timeout Upload temporary news timeout.
      * @returns  Result of upload a temporary news.
      */
-    public async UploadNewsAsync(newsList: News[], isTemporary: boolean, timeout = 30000): Promise<UploadMediaResult> {
+    public async uploadNewsAsync(newsList: News[], isTemporary: boolean, timeout = 30000): Promise<UploadMediaResult> {
         const mediaHash = this.AttachmentHash.computeStringHash(JSON.stringify(newsList)) + isTemporary;
-        const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
-        const accessToken = await this.GetAccessTokenAsync();
-        const url = this.GetUploadNewsEndPoint(accessToken, isTemporary);
+        const cacheResult = await this.AttachmentStorage.getAsync(mediaHash);
+        const accessToken = await this.getAccessTokenAsync();
+        const url = this.getUploadNewsEndPoint(accessToken, isTemporary);
         if (!cacheResult || cacheResult.Expired) {
             const data = {
                 articles: newsList
             };
-            const result = await this.SendHttpRequestAsync('POST', url, data, undefined, timeout);
+            const result = await this.sendHttpRequestAsync('POST', url, data, undefined, timeout);
             let uploadResult: any;
             uploadResult = isTemporary ? new UploadTemporaryMediaResult(result) : new UploadPersistentMediaResult(result);
-            await this.CheckAndUpdateAttachmentStorage(mediaHash, uploadResult);
+            await this.checkAndUpdateAttachmentStorage(mediaHash, uploadResult);
             return uploadResult;
         }
         return cacheResult;
@@ -70,14 +70,14 @@ export class WeChatClient {
      * @param timeout Upload persistent media timeout.
      * @returns  Result of upload persistent media.
      */
-    public async UploadNewsImageAsync(attachmentData: AttachmentData, timeout = 30000): Promise<UploadMediaResult> {
+    public async uploadNewsImageAsync(attachmentData: AttachmentData, timeout = 30000): Promise<UploadMediaResult> {
         const mediaHash = this.AttachmentHash.computeBytesHash(attachmentData.originalBase64);
-        const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
+        const cacheResult = await this.AttachmentStorage.getAsync(mediaHash);
         if (!cacheResult || cacheResult.Expired) {
-            const accessToken = await this.GetAccessTokenAsync();
-            const url = this.GetAcquireMediaUrlEndPoint(accessToken);
-            const uploadResult = await this.ProcessUploadMediaAsync(attachmentData, url, false, timeout);
-            await this.CheckAndUpdateAttachmentStorage(mediaHash, uploadResult);
+            const accessToken = await this.getAccessTokenAsync();
+            const url = this.getAcquireMediaUrlEndPoint(accessToken);
+            const uploadResult = await this.processUploadMediaAsync(attachmentData, url, false, timeout);
+            await this.checkAndUpdateAttachmentStorage(mediaHash, uploadResult);
             return uploadResult;
         }
         return cacheResult;
@@ -90,14 +90,14 @@ export class WeChatClient {
      * @param timeout Upload temporary media timeout.
      * @returns  Result of upload Temporary media.
      */
-    public async UploadMediaAsync(attachmentData: AttachmentData, isTemporary: boolean, timeout = 30000): Promise<UploadMediaResult> {
+    public async uploadMediaAsync(attachmentData: AttachmentData, isTemporary: boolean, timeout = 30000): Promise<UploadMediaResult> {
         const mediaHash = this.AttachmentHash.computeBytesHash(attachmentData.originalBase64) + isTemporary;
-        const cacheResult = await this.AttachmentStorage.GetAsync(mediaHash);
-        const accessToken = await this.GetAccessTokenAsync();
-        const url = this.GetUploadMediaEndPoint(accessToken, attachmentData.type, isTemporary);
+        const cacheResult = await this.AttachmentStorage.getAsync(mediaHash);
+        const accessToken = await this.getAccessTokenAsync();
+        const url = this.getUploadMediaEndPoint(accessToken, attachmentData.type, isTemporary);
         if (!cacheResult || cacheResult.Expired) {
-            const uploadResult = await this.ProcessUploadMediaAsync(attachmentData, url, isTemporary, timeout);
-            await this.CheckAndUpdateAttachmentStorage(mediaHash, uploadResult);
+            const uploadResult = await this.processUploadMediaAsync(attachmentData, url, isTemporary, timeout);
+            await this.checkAndUpdateAttachmentStorage(mediaHash, uploadResult);
             return uploadResult;
         }
         return cacheResult;
@@ -108,8 +108,8 @@ export class WeChatClient {
      * @param mediaId The media Id.
      * @returns  Url of the specific media.
      */
-    public async GetMediaUrlAsync(mediaId: string): Promise<string> {
-        const accessToken = await this.GetAccessTokenAsync();
+    public async getMediaUrlAsync(mediaId: string): Promise<string> {
+        const accessToken = await this.getAccessTokenAsync();
         const mediaUrl = `${ this.ApiHost }/cgi-bin/media/get?access_token=${ accessToken }&media_id=${ mediaId }`;
         return mediaUrl;
     }
@@ -119,11 +119,11 @@ export class WeChatClient {
      * Get access token used to call WeChat API.
      * @returns  Access token string.
      */
-    public async GetAccessTokenAsync(): Promise<string> {
-        const token = await this.TokenStorage.GetAsync(this.AppId);
+    public async getAccessTokenAsync(): Promise<string> {
+        const token = await this.TokenStorage.getAsync(this.AppId);
         if (!token || token.ExpireTime <= new Date(Date.now())) {
-            const url = this.GetAccessTokenEndPoint(this.AppId, this.AppSecret);
-            const result = await this.SendHttpRequestAsync('GET', url);
+            const url = this.getAccessTokenEndPoint(this.AppId, this.AppSecret);
+            const result = await this.sendHttpRequestAsync('GET', url);
             const tokenResult = new AccessTokenResult(result);
             if (!tokenResult.ErrorCode) {
                 const token: WeChatAccessToken = {
@@ -132,7 +132,7 @@ export class WeChatClient {
                     ExpireTime: new Date(Date.now() + tokenResult.ExpireIn * 1000),
                     Token: tokenResult.Token
                 };
-                await this.TokenStorage.SaveAsync(this.AppId, token);
+                await this.TokenStorage.saveAsync(this.AppId, token);
                 return token.Token;
             } else {
                 throw new Error('Acess Token is invalid.');
@@ -148,10 +148,10 @@ export class WeChatClient {
      * @param timeout Send message to user timeout.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendMessageToUser(data: any, timeout = 10000): Promise<WeChatJsonResult> {
-        const accessToken = await this.GetAccessTokenAsync();
-        const url = this.GetMessageApiEndPoint(accessToken);
-        const result = await this.SendHttpRequestAsync('POST', url, data, undefined, timeout);
+    public async sendMessageToUser(data: any, timeout = 10000): Promise<WeChatJsonResult> {
+        const accessToken = await this.getAccessTokenAsync();
+        const url = this.getMessageApiEndPoint(accessToken);
+        const result = await this.sendHttpRequestAsync('POST', url, data, undefined, timeout);
         const sendResult = new WeChatJsonResult(result);
         if (sendResult.ErrorCode) {
             throw new Error(`${ sendResult.ErrorMessage }`);
@@ -159,8 +159,8 @@ export class WeChatClient {
         return sendResult;
     }
 
-    public async SendHttpRequestAsync(method: HttpMethods, url: string, data: any = undefined, headers: HttpHeaders = undefined, timeout = 10000): Promise<any> {
-        const result = await this.MakeHttpRequestAsync(method, url, data, headers, timeout);
+    public async sendHttpRequestAsync(method: HttpMethods, url: string, data: any = undefined, headers: HttpHeaders = undefined, timeout = 10000): Promise<any> {
+        const result = await this.makeHttpRequestAsync(method, url, data, headers, timeout);
         return result;
     }
 
@@ -174,7 +174,7 @@ export class WeChatClient {
      * @param [timeout] Send http request timeout.
      * @returns Http response content.
      */
-    private async MakeHttpRequestAsync(method: HttpMethods, url: string, data: any = undefined, headers: any = undefined, timeout = 10000): Promise<any> {
+    private async makeHttpRequestAsync(method: HttpMethods, url: string, data: any = undefined, headers: any = undefined, timeout = 10000): Promise<any> {
         if (!url.includes(this.ApiHost)) {
             const result = await fetch(url);
             const buffer = await result.arrayBuffer();
@@ -211,7 +211,7 @@ export class WeChatClient {
      * @param customerServiceAccount Customer service account open id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendImageAsync(
+    public async sendImageAsync(
         openId: string,
         mediaId: string,
         timeout = 10000,
@@ -238,7 +238,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -250,7 +250,7 @@ export class WeChatClient {
      * @param customerServiceAccount Customer service account open id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendMPNewsAsync(
+    public async sendMPNewsAsync(
         openId: string,
         mediaId: string,
         timeout = 10000,
@@ -277,7 +277,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -292,7 +292,7 @@ export class WeChatClient {
      * @param customerServiceAccount Customer service account open id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendMusicAsync(
+    public async sendMusicAsync(
         openId: string,
         title: string,
         description: string,
@@ -331,7 +331,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -342,7 +342,7 @@ export class WeChatClient {
      * @param customerServiceAccount Customer service account open id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendNewsAsync(
+    public async sendNewsAsync(
         openId: string,
         articles: Article[],
         timeout = 10000,
@@ -369,7 +369,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -380,7 +380,7 @@ export class WeChatClient {
      * @param customerServiceAccount Customer service account open id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendTextAsync(
+    public async sendTextAsync(
         openId: string,
         content: string,
         timeout = 10000,
@@ -407,7 +407,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -421,7 +421,7 @@ export class WeChatClient {
      * @param thumbMeidaId Thumbnail image media id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendVideoAsync(
+    public async sendVideoAsync(
         openId: string,
         mediaId: string,
         title: string,
@@ -457,7 +457,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -468,7 +468,7 @@ export class WeChatClient {
      * @param customerServiceAccount Customer service account open id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendVoiceAsync(openId: string, mediaId: string, timeout = 10000, customerServiceAccount: string = undefined): Promise<WeChatJsonResult> {
+    public async sendVoiceAsync(openId: string, mediaId: string, timeout = 10000, customerServiceAccount: string = undefined): Promise<WeChatJsonResult> {
         let data: any;
         if (!customerServiceAccount) {
             data = {
@@ -490,7 +490,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -501,7 +501,7 @@ export class WeChatClient {
      * @param customerServiceAccount Customer service account open id.
      * @returns  Standard result of calling WeChat message API.
      */
-    public async SendMessageMenuAsync(openId: string, messageMenu: MessageMenu, timeout = 10000, customerServiceAccount: string = undefined): Promise<WeChatJsonResult> {
+    public async sendMessageMenuAsync(openId: string, messageMenu: MessageMenu, timeout = 10000, customerServiceAccount: string = undefined): Promise<WeChatJsonResult> {
         let data: any;
         if (!customerServiceAccount) {
             data = {
@@ -519,7 +519,7 @@ export class WeChatClient {
                 }
             };
         }
-        return await this.SendMessageToUser(data, timeout);
+        return await this.sendMessageToUser(data, timeout);
     }
 
     /**
@@ -530,10 +530,10 @@ export class WeChatClient {
      * @param [timeout] Upload media timeout.
      * @returns Uploaded result from WeChat.
      */
-    private async ProcessUploadMediaAsync(attachmentData: AttachmentData, url: string, isTemporaryMeida: boolean, timeout = 10000): Promise<UploadMediaResult> {
+    private async processUploadMediaAsync(attachmentData: AttachmentData, url: string, isTemporaryMeida: boolean, timeout = 10000): Promise<UploadMediaResult> {
         let form = new FormData();
         let headers: any;
-        const ext = this.GetMediaExtension(attachmentData.type);
+        const ext = this.getMediaExtension(attachmentData.type);
         form.append('media', Buffer.from(attachmentData.originalBase64), {
             contentType: attachmentData.type,
             filename: attachmentData.name + ext,
@@ -546,7 +546,7 @@ export class WeChatClient {
             });
         }
         headers = { 'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}` };
-        const response = await this.SendHttpRequestAsync('POST', url, form, headers, timeout);
+        const response = await this.sendHttpRequestAsync('POST', url, form, headers, timeout);
         if (isTemporaryMeida) {
             return new UploadTemporaryMediaResult(response);
         } else {
@@ -560,12 +560,12 @@ export class WeChatClient {
      * @param uploadResult Upload media result.
      * @returns  Task of updating media.
      */
-    private async CheckAndUpdateAttachmentStorage(
+    private async checkAndUpdateAttachmentStorage(
         mediaHash: string,
         uploadResult: UploadMediaResult
     ) {
         if (!uploadResult.ErrorCode) {
-            await this.AttachmentStorage.SaveAsync(mediaHash, uploadResult);
+            await this.AttachmentStorage.saveAsync(mediaHash, uploadResult);
         } else {
             throw new Error('Upload media to WeChat failed.');
         }
@@ -574,21 +574,21 @@ export class WeChatClient {
     /**
      * Private method to get access token endpoint.
      */
-    private GetAccessTokenEndPoint(appId: string, appSecret: string) {
+    private getAccessTokenEndPoint(appId: string, appSecret: string) {
         return `${ this.ApiHost }/cgi-bin/token?grant_type=client_credential&appid=${ appId }&secret=${ appSecret }`;
     }
 
     /**
      * Private method to get message api endpoint.
      */
-    private GetMessageApiEndPoint(accessToken: string) {
+    private getMessageApiEndPoint(accessToken: string) {
         return `${ this.ApiHost }/cgi-bin/message/custom/send?access_token=${ accessToken }`;
     }
 
     /**
      * Private method to get upload media endpoint.
      */
-    private GetUploadMediaEndPoint(accessToken: string, type: string, isTemporaryMeida: boolean) {
+    private getUploadMediaEndPoint(accessToken: string, type: string, isTemporaryMeida: boolean) {
         if (isTemporaryMeida) {
             return `${ this.ApiHost }/cgi-bin/media/upload?access_token=${ accessToken }&type=${ type }`;
         }
@@ -598,18 +598,18 @@ export class WeChatClient {
     /**
      * Private method to get upload news endpoint.
      */
-    private GetUploadNewsEndPoint(accessToken: string, isTemporary: boolean) {
+    private getUploadNewsEndPoint(accessToken: string, isTemporary: boolean) {
         if (isTemporary) {
             return `${ this.ApiHost }/cgi-bin/media/uploadnews?access_token=${ accessToken }`;
         }
         return `${ this.ApiHost }/cgi-bin/material/add_news?access_token=${ accessToken }`;
     }
 
-    private GetAcquireMediaUrlEndPoint(accessToken: string) {
+    private getAcquireMediaUrlEndPoint(accessToken: string) {
         return `${ this.ApiHost }/cgi-bin/media/uploadimg?access_token=${ accessToken }`;
     }
 
-    private GetMediaExtension(type: string) {
+    private getMediaExtension(type: string) {
         if (type.includes(MediaTypes.Image) || type.includes(MediaTypes.Thumb)) {
             return '.jpg';
         }
