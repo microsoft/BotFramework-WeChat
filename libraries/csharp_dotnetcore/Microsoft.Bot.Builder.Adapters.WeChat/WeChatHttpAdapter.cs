@@ -81,39 +81,68 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="activities">An array of outgoing activities to be sent back to the messaging API.</param>
         /// <param name="cancellationToken">A cancellation token for the task.</param>
         /// <returns>A resource response array with the message Sids.</returns>
-        public override Task<ResourceResponse[]> SendActivitiesAsync(ITurnContext turnContext, Activity[] activities, CancellationToken cancellationToken)
+        public override async Task<ResourceResponse[]> SendActivitiesAsync(ITurnContext turnContext, Activity[] activities, CancellationToken cancellationToken)
         {
-            var resourceResponses = new List<ResourceResponse>();
-
-            foreach (var activity in activities)
+            if (turnContext == null)
             {
-                switch (activity.Type)
-                {
-                    case ActivityTypes.Message:
-                    case ActivityTypes.EndOfConversation:
-                        var conversation = activity.Conversation ?? new ConversationAccount();
-                        var key = GetResponseKey(conversation.Id, activity.ReplyToId);
-                        var responses = turnContext.TurnState.Get<Dictionary<string, List<Activity>>>(TurnResponseKey);
-                        if (responses.ContainsKey(key))
-                        {
-                            responses[key].Add(activity);
-                        }
-                        else
-                        {
-                            responses[key] = new List<Activity> { activity };
-                        }
-
-                        break;
-                    default:
-                        _logger.LogInformation(
-                            $"WeChatAdapter.SendActivities(): Activities of type '{activity.Type}' aren't supported.");
-                        break;
-                }
-
-                resourceResponses.Add(new ResourceResponse(activity.Id));
+                throw new ArgumentNullException(nameof(turnContext));
             }
 
-            return Task.FromResult(resourceResponses.ToArray());
+            if (activities == null)
+            {
+                throw new ArgumentNullException(nameof(activities));
+            }
+
+            if (activities.Length == 0)
+            {
+                throw new ArgumentException("Expecting one or more activities, but the array was empty.", nameof(activities));
+            }
+
+            var responses = new ResourceResponse[activities.Length];
+
+            /*
+             * NOTE: we're using for here (vs. foreach) because we want to simultaneously index into the
+             * activities array to get the activity to process as well as use that index to assign
+             * the response to the responses array and this is the most cost effective way to do that.
+             */
+            for (var index = 0; index < activities.Length; index++)
+            {
+                var activity = activities[index];
+                var response = default(ResourceResponse);
+
+                _logger.LogInformation($"Sending activity. ReplyToId: {activity.ReplyToId}");
+
+                if (activity.Type == ActivityTypesEx.Delay)
+                {
+                    // The Activity Schema doesn't have a delay type build in, so it's simulated
+                    // here in the Bot. This matches the behavior in the Node connector.
+                    var delayMs = (int)activity.Value;
+                    await Task.Delay(delayMs, cancellationToken).ConfigureAwait(false);
+
+                    // No need to create a response. One will be created below.
+                }
+                else if (activity.Type == ActivityTypes.Message || activity.Type == ActivityTypes.EndOfConversation)
+                {
+                    var currentResponses = turnContext.TurnState.Get<List<Activity>>(TurnResponseKey);
+                    currentResponses.Add(activity);
+                }
+                else
+                {
+                    _logger.LogInformation($"WeChatAdapter.SendActivities(): Activities of type '{activity.Type}' aren't supported.");
+                }
+
+                // If No response is set, then default to a "simple" response. This can't really be done
+                // above, as there are cases where the ReplyTo/SendTo methods will also return null
+                // (See below) so the check has to happen here.
+                if (response == null)
+                {
+                    response = new ResourceResponse(activity.Id ?? string.Empty);
+                }
+
+                responses[index] = response;
+            }
+
+            return responses;
         }
 
         /// <summary>
@@ -250,14 +279,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         }
 
         /// <summary>
-        /// Get response key of the specific conversation.
-        /// </summary>
-        /// <param name="conversationId">The activity instance.</param>
-        /// <param name="acitvityId">Reply to activity id.</param>
-        /// <returns>Key to get the response of the activity.</returns>
-        private static string GetResponseKey(string conversationId, string acitvityId) => $"{conversationId}:{acitvityId}";
-
-        /// <summary>
         /// Process the request from WeChat.
         /// </summary>
         /// <param name="wechatRequest">Request message entity from wechat.</param>
@@ -323,13 +344,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             {
                 try
                 {
-                    var responses = new Dictionary<string, List<Activity>>();
+                    var responses = new List<Activity>();
                     context.TurnState.Add(TurnResponseKey, responses);
                     await RunPipelineAsync(context, callback, cancellationToken).ConfigureAwait(false);
-                    var key = GetResponseKey(activity.Conversation.Id, activity.Id);
                     try
                     {
-                        var activities = responses.ContainsKey(key) ? responses[key] : new List<Activity>();
+                        var activities = responses;
                         if (_settings.PassiveResponseMode)
                         {
                             return await ProcessBotResponse(activities, activity.From.Id).ConfigureAwait(false);
