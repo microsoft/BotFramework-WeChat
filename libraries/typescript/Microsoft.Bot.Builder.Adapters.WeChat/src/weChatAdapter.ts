@@ -143,18 +143,18 @@ export class WeChatAdapter extends BotAdapter {
                 case ActivityTypes.Message:
                 case ActivityTypes.EndOfConversation:
                     activityList.push(activity);
+                    const resourceResponse: ResourceResponse = { id: activity.id || undefined };
+                    resourceResponses.push(resourceResponse);
                     break;
                 case 'delay':
                     await delay(typeof activity.value === 'number' ? activity.value : 1000);
                     resourceResponses.push( {} as ResourceResponse);
                     break;
                 default:
+                    const otherResponse: ResourceResponse = { id: activity.id || undefined };
+                    resourceResponses.push(otherResponse);
                     break;
             }
-            const resourceResponse: ResourceResponse = {
-                id: activity.id || undefined
-            };
-            resourceResponses.push(resourceResponse);
         }
         return resourceResponses;
     }
