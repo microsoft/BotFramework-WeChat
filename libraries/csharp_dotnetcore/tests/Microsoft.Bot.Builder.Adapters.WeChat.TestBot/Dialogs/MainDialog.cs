@@ -2,12 +2,15 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
 {
@@ -160,6 +163,17 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
                         },
                     };
                     break;
+                case "MessageMenu":
+                    // Display Message menu
+                    string[] paths = { ".", "Resources", "messageMenu.json" };
+                    var menuJson = File.ReadAllText(Path.Combine(paths));
+                    reply.ChannelData = new
+                    {
+                        touser = stepContext.Context.Activity.From.Id,
+                        msgtype = ResponseMessageTypes.MessageMenu,
+                        msgmenu = JObject.Parse(menuJson),
+                    };
+                    break;
                 default:
                     // Give the user instructions about what to do next
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text("Type anything to show the choice list again."), cancellationToken);
@@ -192,6 +206,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.TestBot
                 new Choice() { Value = "SuggestedActions", Synonyms = new List<string>() { "suggestedactions", "suggest", "suggested" } },
                 new Choice() { Value = "Images", Synonyms = new List<string>() { "images" } },
                 new Choice() { Value = "Videos", Synonyms = new List<string>() { "videos" } },
+                new Choice() { Value = "MessageMenu", Synonyms = new List<string>() { "messagemenu" } },
             };
 
             return cardOptions;
