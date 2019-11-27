@@ -13,6 +13,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         [XmlElement(ElementName = "Content")]
         public string Content { get; set; }
 
-        // public string Bizmsgmenuid { get; set; }
+        [XmlElement(ElementName = "bizmsgmenuid")]
+        public string Bizmsgmenuid { get; set; }
     }
 }

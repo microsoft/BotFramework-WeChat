@@ -83,6 +83,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             if (wechatRequest is TextRequest textRequest)
             {
                 activity.Text = textRequest.Content;
+                activity.Value = textRequest.Bizmsgmenuid;
             }
             else if (wechatRequest is ImageRequest imageRequest)
             {
