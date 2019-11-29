@@ -15,8 +15,8 @@ using Microsoft.Bot.Builder.Adapters.WeChat.Helpers;
 using Microsoft.Bot.Builder.Adapters.WeChat.Schema;
 using Microsoft.Bot.Builder.Adapters.WeChat.Schema.JsonResults;
 using Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests;
+using Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events;
 using Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses;
-using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -83,6 +83,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             if (wechatRequest is TextRequest textRequest)
             {
                 activity.Text = textRequest.Content;
+                activity.Value = textRequest.Bizmsgmenuid;
             }
             else if (wechatRequest is ImageRequest imageRequest)
             {
@@ -346,11 +347,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 activity.Id = requestMessage.MsgId.ToString(CultureInfo.InvariantCulture);
                 activity.Type = ActivityTypes.Message;
             }
-            else
+            else if (wechatRequest is RequestEvent eventRequest)
             {
                 // Event message don't have Id;
                 activity.Id = Guid.NewGuid().ToString();
                 activity.Type = ActivityTypes.Event;
+                activity.Name = eventRequest.EventType;
             }
 
             return activity;
