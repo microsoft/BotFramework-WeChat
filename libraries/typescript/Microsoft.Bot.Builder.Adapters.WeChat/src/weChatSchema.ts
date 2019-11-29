@@ -249,6 +249,8 @@ export interface TextRequest extends RequestMessage {
     MsgType: RequestMessageTypes.Text;
 
     Content: string;
+
+    bizmsgmenuid: string;
 }
 
 export interface UnknowRequest extends RequestMessage {

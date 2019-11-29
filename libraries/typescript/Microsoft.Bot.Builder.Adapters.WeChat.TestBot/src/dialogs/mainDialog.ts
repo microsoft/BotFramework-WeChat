@@ -158,6 +158,10 @@ export class MainDialog extends ComponentDialog {
                 value: 'All Cards',
                 synonyms: ['all']
             } */
+            {
+                value: 'MessageMenu',
+                synonyms: ['messagemenu']
+            }
         ];
 
         return cardOptions;

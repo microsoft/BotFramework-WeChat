@@ -45,6 +45,7 @@ export class WeChatMessageMapper {
             case RequestMessageTypes.Text:
                 const textRequest = wechatRequest as TextRequest;
                 activity.text = textRequest.Content;
+                activity.value = textRequest.bizmsgmenuid;
                 break;
             case RequestMessageTypes.Image:
                 const imageRequest = wechatRequest as ImageRequest;
