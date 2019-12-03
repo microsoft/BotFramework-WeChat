@@ -1,4 +1,4 @@
-name: .NET Core
+name: Pull Request
 
 on:   
   pull_request:
@@ -19,14 +19,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.108
-    - name: Build with dotnet
+    - name: Build Test Project
       run: dotnet build
       working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
-    - name: dotnet test
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+    - name: Run Tests
+      run: dotnet test
       working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
-    - name: Publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests/TestResults/coverage.info 

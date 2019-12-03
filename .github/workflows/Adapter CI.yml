@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - master
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   build:
@@ -19,13 +21,17 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.108
-    - name: build adapter
+    - name: Build Adapter
       run: dotnet build
       working-directory: libraries/csharp_dotnetcore/Microsoft.Bot.Builder.Adapters.WeChat
-    - name: build test
+    - name: Build Test Project
       run: dotnet build
       working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
-    - name: dotnet test
-      run: dotnet test
+    - name: Run Tests
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
       working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
-      
+    - name: Publish Coverage Result
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests/TestResults/coverage.info 
