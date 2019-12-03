@@ -25,4 +25,7 @@ jobs:
     - name: dotnet test
       run: dotnet test
       working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
-      
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
