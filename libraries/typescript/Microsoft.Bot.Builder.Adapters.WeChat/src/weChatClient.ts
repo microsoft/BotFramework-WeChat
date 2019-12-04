@@ -135,7 +135,7 @@ export class WeChatClient {
                 await this.TokenStorage.saveAsync(this.AppId, token);
                 return token.Token;
             } else {
-                throw new Error('Acess Token is invalid.');
+                throw new Error(`${JSON.stringify(tokenResult)}`);
             }
         } else {
             return token.Token;

@@ -3,7 +3,9 @@
 
 import { AttachmentLayoutTypes, CardFactory } from 'botbuilder';
 import { ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, WaterfallDialog } from 'botbuilder-dialogs';
+import { ResponseMessageTypes } from 'botframework-wechat';
 import * as AdaptiveCard from '../resources/adaptiveCard.json';
+import * as MessageMenu from '../resources/MessageMenu.json';
 
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
@@ -92,6 +94,14 @@ export class MainDialog extends ComponentDialog {
             break;
         case 'Video Card':
             await stepContext.context.sendActivity({ attachments: [this.createVideoCard()] });
+            break;
+        case 'MessageMenu':
+            const channelData = {
+                    touser: stepContext.context.activity.from.id,
+                    msgtype: ResponseMessageTypes.MessageMenu,
+                    msgmenu: MessageMenu
+                    };
+            await stepContext.context.sendActivity({ channelData });
             break;
         default:
             await stepContext.context.sendActivity({
