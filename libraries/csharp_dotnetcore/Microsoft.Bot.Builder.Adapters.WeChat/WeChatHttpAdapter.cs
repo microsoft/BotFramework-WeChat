@@ -51,6 +51,17 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         }
 
         /// <summary>
+        /// Get access token depends on the current settings.
+        /// </summary>
+        /// <param name="forceRefresh">If force refresh the token.</param>
+        /// <returns>The access token string.</returns>
+        public async Task<string> GetWeChatAccessToken(bool forceRefresh)
+        {
+            var accessToken = await _wechatClient.GetAccessTokenAsync(forceRefresh).ConfigureAwait(false);
+            return accessToken;
+        }
+
+        /// <summary>
         /// Standard BotBuilder adapter method to delete a previous message.
         /// </summary>
         /// <param name="turnContext">A TurnContext representing the current incoming message and environment.</param>

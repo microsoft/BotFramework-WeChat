@@ -724,7 +724,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
             var wechatClient = new Mock<WeChatClient>(WeChatSettings, storage, null);
             var result = JsonConvert.SerializeObject(WeChatJsonResult);
             var byteResult = Encoding.UTF8.GetBytes(result);
-            wechatClient.Setup(c => c.GetAccessTokenAsync()).Returns(Task.FromResult("mockToken"));
+            wechatClient.Setup(c => c.GetAccessTokenAsync(false)).Returns(Task.FromResult("mockToken"));
             wechatClient.Setup(c => c.SendHttpRequestAsync(It.IsAny<HttpMethod>(), It.IsAny<string>(), It.IsAny<object>(), It.IsAny<string>(), It.IsAny<int>())).Returns(Task.FromResult(byteResult));
             wechatClient.Setup(c => c.UploadMediaAsync(It.IsAny<AttachmentData>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(Task.FromResult(MockTempMediaResult(MediaTypes.Image)));
             wechatClient.Setup(c => c.UploadNewsAsync(It.IsAny<News[]>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(Task.FromResult(MockTempMediaResult(MediaTypes.News)));
