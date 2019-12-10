@@ -110,11 +110,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <summary>
         /// Get access token used to call WeChat API.
         /// </summary>
+        /// <param name="forceRefresh">Force refresh the access token.</param>
         /// <returns>Access token string.</returns>
-        public virtual async Task<string> GetAccessTokenAsync()
+        public virtual async Task<string> GetAccessTokenAsync(bool forceRefresh = false)
         {
             var token = await _tokenStorage.GetAsync(_settings.AppId).ConfigureAwait(false);
-            if (token == null)
+            if (token == null || forceRefresh)
             {
                 var url = GetAccessTokenEndPoint(_settings.AppId, _settings.AppSecret);
                 var bytes = await SendHttpRequestAsync(HttpMethod.Get, url).ConfigureAwait(false);
