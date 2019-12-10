@@ -119,9 +119,9 @@ export class WeChatClient {
      * Get access token used to call WeChat API.
      * @returns  Access token string.
      */
-    public async getAccessTokenAsync(): Promise<string> {
+    public async getAccessTokenAsync(foreceRefresh: boolean = false): Promise<string> {
         const token = await this.TokenStorage.getAsync(this.AppId);
-        if (!token || token.ExpireTime <= new Date(Date.now())) {
+        if (!token || token.ExpireTime <= new Date(Date.now()) || foreceRefresh) {
             const url = this.getAccessTokenEndPoint(this.AppId, this.AppSecret);
             const result = await this.sendHttpRequestAsync('GET', url);
             const tokenResult = new AccessTokenResult(result);

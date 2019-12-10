@@ -203,6 +203,15 @@ export class WeChatAdapter extends BotAdapter {
         }
     }
 
+    /**
+     * Get access token depends on the current settings.
+     * @param forceRefresh If force refresh the token.
+     * @returns The access token string.
+     */
+    public async getWeChatAccessToken(forceRefresh: boolean): Promise<string> {
+        const accessToken = await this.weChatClient.getAccessTokenAsync(forceRefresh);
+        return accessToken;
+    }
 
     /**
      * Get the respone from bot for the wechat request.
