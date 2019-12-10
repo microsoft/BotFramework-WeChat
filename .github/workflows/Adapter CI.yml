@@ -1,13 +1,6 @@
 name: Adapter CI
 
-on:   
-  pull_request:
-    types: [opened, reopened, synchronize]
-  push:
-    branches:
-      - master
-  schedule:
-    - cron: "0 0 * * *"
+on: ["push", "pull_request"]
 
 jobs:
   build:
