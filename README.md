@@ -1,3 +1,8 @@
+# BotFramework-WeChat
+ | Branch | Description        | Build Status | Coverage Status |
+ |----|---------------|--------------|-----------------|
+|Master | WeChat Adapter Builds |[![Build Status](https://github.com/microsoft/BotFramework-WeChat/workflows/Adapter%20CI/badge.svg?branch=master)](https://github.com/microsoft/BotFramework-WeChat/actions?query=branch%3Amaster)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/BotFramework-WeChat/badge.svg?branch=master)](https://coveralls.io/github/microsoft/BotFramework-WeChat?branch=master)|
+
 
 # Contributing
 
