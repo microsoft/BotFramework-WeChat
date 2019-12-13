@@ -31,7 +31,8 @@ const wechatAdapter = new WeChatAdapter(storage, {
     AppSecret: process.env.AppSecret,
     Token: process.env.Token,
     EncodingAESKey: process.env.EncodingAESKey,
-    UploadTemporaryMedia: process.env.UploadTemporaryMedia === 'true'
+    UploadTemporaryMedia: process.env.UploadTemporaryMedia === 'true',
+    PassiveResponse: process.env.passiveResponse === 'true'
 });
 
 // Catch-all for errors.
@@ -74,7 +75,7 @@ server.post('/WeChat', (req, res) => {
             // Route to main dialog.
             await bot.run(context);
         },
-        secretInfo, false);
+        secretInfo);
 });
 
 server.get('/WeChat', (req, res) => {

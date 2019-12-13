@@ -8,7 +8,8 @@ const settings = {
     AppSecret: 'ae88532259999efbd5edd91a08703e7c',
     Token: 'bmwipabotwx',
     EncodingAESKey: 'P7PIjIGpA7axbjbffRoWYq7G0BsIaEpqdawIir4KqCt',
-    UploadTemporaryMedia: true
+    UploadTemporaryMedia: true,
+    passiveResponse: false
 };
 const reference = {
     activityId: '1234',
@@ -55,7 +56,7 @@ class MockWeChatClient extends WeChatClient {
     constructor(AppId, AppSecret, storage) {
         super(AppId, AppSecret, storage);
     }
-    async SendHttpRequestAsync(method, url, data = undefined, token = undefined, timeout = 10000) {
+    async sendHttpRequestAsync(method, url, data = undefined, token = undefined, timeout = 10000) {
         var result = WeChatResult;
         if (url.includes('cgi-bin/token')) {
             result = TokenResult;
@@ -78,6 +79,7 @@ class MockAdapter extends WeChatAdapter {
     constructor(storage, settings) {
         super(storage, settings);
         this.weChatClient = new MockWeChatClient(this.settings.AppId, this.settings.AppSecret, storage);
+        this.passiveResponse = this.settings.passiveResponse;
     }
 }
 
@@ -120,7 +122,7 @@ describe('WeChatAdapter', () => {
         const res = new MockResponse();
         await WeChatAdapterTest.processActivity(req, res, async (context) => {
             await bot.run(context);
-        }, secretInfo, false);
+        }, secretInfo);
     });
 
     it('should processActivity() with passive response', async () => {
@@ -128,12 +130,12 @@ describe('WeChatAdapter', () => {
         const res = new MockResponse();
         await WeChatAdapterTest.processActivity(req, res, async (context) => {
             await bot.run(context);
-        }, secretInfo, true);
+        }, secretInfo);
     });
 
     it('should throw error if request is undefined', async () => {
         try {
-            await WeChatAdapterTest.processActivity(undefined, undefined, undefined, secretInfo, false);
+            await WeChatAdapterTest.processActivity(undefined, undefined, undefined, secretInfo);
         } catch (e) {
             assert.equal(e.message, 'ArgumentNullException - Request is invalid.');
         }
@@ -142,7 +144,7 @@ describe('WeChatAdapter', () => {
     it('should throw error if response is undefined', async () => {
         const req = new MockRequest(incomingMessage);
         try {
-            await WeChatAdapterTest.processActivity(req, undefined, undefined, secretInfo, false);
+            await WeChatAdapterTest.processActivity(req, undefined, undefined, secretInfo);
         } catch (e) {
             assert.equal(e.message, 'ArgumentNullException - Response is invalid.');
         }
@@ -152,7 +154,7 @@ describe('WeChatAdapter', () => {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         try {
-            await WeChatAdapterTest.processActivity(req, res, undefined, secretInfo, false);
+            await WeChatAdapterTest.processActivity(req, res, undefined, secretInfo);
         } catch (e) {
             assert.equal(e.message, 'ArgumentNullException - Bot logic is invalid.');
         }
@@ -164,7 +166,7 @@ describe('WeChatAdapter', () => {
         try {
             await WeChatAdapterTest.processActivity(req, res, async (context) => {
                 await bot.run(context);
-            }, undefined, false);
+            }, undefined);
         } catch (e) {
             assert.equal(e.message, 'ArgumentNullException - Secret information is invalid.');
         }

@@ -42,6 +42,7 @@ export interface WeChatAdapterSettings {
     Token: string;
     EncodingAESKey: string;
     UploadTemporaryMedia: boolean;
+    PassiveResponse: boolean;
 }
 
 /**
@@ -55,6 +56,7 @@ export class WeChatAdapter extends BotAdapter {
 
     private weChatMessageMapper: WeChatMessageMapper;
     private weChatClient: WeChatClient;
+    private passiveResponse: boolean;
     protected readonly settings: WeChatAdapterSettings;
 
     /**
@@ -65,15 +67,17 @@ export class WeChatAdapter extends BotAdapter {
     constructor(storage: Storage, settings: WeChatAdapterSettings) {
         super();
         this.settings = {
-            AppId: '',
-            AppSecret: '',
-            Token: '',
-            EncodingAESKey: '',
+            AppId: undefined,
+            AppSecret: undefined,
+            Token: undefined,
+            EncodingAESKey: undefined,
             UploadTemporaryMedia: undefined,
+            PassiveResponse: undefined,
             ...settings
         };
         this.weChatClient = new WeChatClient(this.settings.AppId, this.settings.AppSecret, storage);
         this.weChatMessageMapper = new WeChatMessageMapper(this.weChatClient, this.settings.UploadTemporaryMedia);
+        this.passiveResponse = this.settings.PassiveResponse;
     }
 
     /**
@@ -104,13 +108,13 @@ export class WeChatAdapter extends BotAdapter {
      * @param passiveResponse Marked the message whether it needs passive reply or not.
      * @returns Response message entity.
      */
-    public async processWeChatRequest(wechatRequest: IRequestMessageBase, logic: (context: TurnContext) => Promise<any>, passiveResponse: boolean): Promise<any> {
+    public async processWeChatRequest(wechatRequest: IRequestMessageBase, logic: (context: TurnContext) => Promise<any>): Promise<any> {
         const activities = [];
         const activity = await this.weChatMessageMapper.toConnectorMessage(wechatRequest);
         const context = new TurnContext(this, activity as Activity);
         context.turnState.set(this.TurnResponseKey, activities);
         await this.runMiddleware(context, logic);
-        const response = await this.processBotResponse(activities, wechatRequest.FromUserName, passiveResponse);
+        const response = await this.processBotResponse(activities, wechatRequest.FromUserName);
         return response;
     }
 
@@ -168,7 +172,7 @@ export class WeChatAdapter extends BotAdapter {
      * @param passiveResponse If using passvice response mode, if set to true, user can only get one reply.
      * @returns Process activity result.
      */
-    public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>, secretInfo: SecretInfo, passiveResponse: boolean): Promise<void> {
+    public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>, secretInfo: SecretInfo): Promise<void> {
         if (!req) {
             throw new Error(`ArgumentNullException - Request is invalid.`);
         }
@@ -193,8 +197,8 @@ export class WeChatAdapter extends BotAdapter {
         secretInfo.EncodingAesKey = this.settings.EncodingAESKey;
         secretInfo.AppId = this.settings.AppId;
         const weChatRequest = await parseRequest(req, secretInfo);
-        if (!passiveResponse) {
-            this.processWeChatRequest(weChatRequest, logic, passiveResponse);
+        if (!this.passiveResponse) {
+            this.processWeChatRequest(weChatRequest, logic);
             // Return status
             res.status(200);
             res.end();
@@ -220,19 +224,19 @@ export class WeChatAdapter extends BotAdapter {
      * @param passiveResponse If using passvice response mode, if set to true, user can only get one reply.
      * @returns Bot response message.
      */
-    private async processBotResponse(activities: Activity[], openId: string, passiveResponse: boolean): Promise<any> {
+    private async processBotResponse(activities: Activity[], openId: string): Promise<any> {
         let response: any;
         for (const activity of activities) {
             if (activity && activity.type === ActivityTypes.Message) {
                 if (activity.channelData) {
-                    if (passiveResponse) {
+                    if (this.passiveResponse) {
                         response = activity.channelData;
                     } else {
                         await this.sendChannelDataToWeChat(activity.channelData);
                     }
                 } else {
                     const responseList = (await this.weChatMessageMapper.toWeChatMessage(activity)) as IResponseMessageBase[];
-                    if (passiveResponse) {
+                    if (this.passiveResponse) {
                         response = responseList;
                     } else {
                         await this.sendMessageToWeChat(responseList, openId);

@@ -121,7 +121,7 @@ export class WeChatClient {
      */
     public async getAccessTokenAsync(foreceRefresh: boolean = false): Promise<string> {
         const token = await this.TokenStorage.getAsync(this.AppId);
-        if (!token || token.ExpireTime <= new Date(Date.now()) || foreceRefresh) {
+        if (!token || token.ExpireTime <= Date.now().valueOf() || foreceRefresh) {
             const url = this.getAccessTokenEndPoint(this.AppId, this.AppSecret);
             const result = await this.sendHttpRequestAsync('GET', url);
             const tokenResult = new AccessTokenResult(result);
@@ -129,7 +129,7 @@ export class WeChatClient {
                 const token: WeChatAccessToken = {
                     AppId: this.AppId,
                     Secret: this.AppSecret,
-                    ExpireTime: new Date(Date.now() + tokenResult.ExpireIn * 1000),
+                    ExpireTime: Date.now().valueOf() + tokenResult.ExpireIn * 1000,
                     Token: tokenResult.Token
                 };
                 await this.TokenStorage.saveAsync(this.AppId, token);

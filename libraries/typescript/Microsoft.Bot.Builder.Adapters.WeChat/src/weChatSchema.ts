@@ -581,7 +581,7 @@ export interface WeChatAccessToken {
 
     Secret: string;
 
-    ExpireTime: Date;
+    ExpireTime: number;
 }
 
 export class WeChatJsonResult {

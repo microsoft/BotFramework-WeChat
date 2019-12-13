@@ -7,6 +7,8 @@
     "clean": "lerna run clean",
     "test": "lerna run build && nyc mocha \"Microsoft.Bot.Builder.Adapters.WeChat/tests/*.test.js\"",
     "test-coverage": "nyc mocha \"Microsoft.Bot.Builder.Adapters.WeChat/tests/*.test.js\"",
+    "test:coveralls": "lerna run build && nyc mocha \"Microsoft.Bot.Builder.Adapters.WeChat/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
+    "upload-coverage": "nyc report --reporter=text-lcov | coveralls",
     "eslint": "eslint  ./Microsoft.Bot.Builder.Adapters.WeChat/src/*.ts",
     "eslint-fix": "eslint  ./Microsoft.Bot.Builder.Adapters.WeChat/src/*.ts --fix"
   },

@@ -54,17 +54,17 @@ class MockWeChatClient extends WeChatClient {
     constructor(AppId, AppSecret, storage) {
         super(AppId, AppSecret, storage);
     }
-    async GetAccessTokenAsync() {
+    async getAccessTokenAsync() {
         return 'mockToken';
     }
-    async SendHttpRequestAsync(method, url, data = undefined, token = undefined, timeout = 10000) {
+    async sendHttpRequestAsync(method, url, data = undefined, token = undefined, timeout = 10000) {
         const WeChatResult = {
             errcode: 0,
             errmsg: 'ok',
         };
         return WeChatResult;
     }
-    async UploadMediaAsync(attachmentData, isTemporary, timeout) {
+    async uploadMediaAsync(attachmentData, isTemporary, timeout) {
         const mediaResult = {
             errcode: 0,
             errmsg: 'ok',
@@ -74,7 +74,7 @@ class MockWeChatClient extends WeChatClient {
         };
         return new UploadTemporaryMediaResult(mediaResult);
     }
-    async UploadNewsAsync(newsList, isTemporary, timeout) {
+    async uploadNewsAsync(newsList, isTemporary, timeout) {
         const mediaResult = {
             errcode: 0,
             errmsg: 'ok',
@@ -84,7 +84,7 @@ class MockWeChatClient extends WeChatClient {
         };
         return new UploadTemporaryMediaResult(mediaResult);
     }
-    async UploadNewsImageAsync(attachmentData, timeout) {
+    async uploadNewsImageAsync(attachmentData, timeout) {
         const mediaResult = {
             media_id: 'mediaId',
             url: 'https://mediaUrl',
@@ -116,7 +116,7 @@ function parseXML(str){
     });
 }
 
-async function GetMockRequestMessageList() {
+async function getMockRequestMessageList() {
     const result = [
         await parseXML(XmlText),
         await parseXML(XmlImage),
@@ -134,7 +134,7 @@ async function GetMockRequestMessageList() {
     return result;
 }
 
-function GetMockMessageActivityList() {
+function getMockMessageActivityList() {
     var result = [];
     mockActivity.attachments.push(CardFactory.animationCard('foo', ['https://example.org/media'], ['a', 'b', 'c']));
     mockActivity.attachments.push(CardFactory.audioCard('foo', ['https://example.org/media'], ['a', 'b', 'c']));
@@ -154,9 +154,9 @@ const testMessageMapperForever = new WeChatMessageMapper(testClient, false);
 
 describe('WeChat Message Mapper', () => {
     it('should get correct activity from wechat request message', async () => {
-        const mockRequestList = await GetMockRequestMessageList();
+        const mockRequestList = await getMockRequestMessageList();
         for (let request of mockRequestList) {
-            var activity = await testMessageMapperTemporary.ToConnectorMessage(request);
+            var activity = await testMessageMapperTemporary.toConnectorMessage(request);
             assert.equal(activity.recipient.id, request.ToUserName);
             assert.equal(activity.recipient.name, 'Bot');
             assert.equal(activity.from.id, request.FromUserName);
@@ -172,16 +172,16 @@ describe('WeChat Message Mapper', () => {
         }
     });
     it('should convert response message from Bot format to Wechat format correctly for temporary upload', async () => {
-        const activityList = GetMockMessageActivityList();
+        const activityList = getMockMessageActivityList();
         for (let messageActivity of activityList) {
-            const MeidaResponse = await testMessageMapperTemporary.ToWeChatMessage(messageActivity);
+            const MeidaResponse = await testMessageMapperTemporary.toWeChatMessage(messageActivity);
             assert(MeidaResponse.length > 0, 'The number of responses should not be 0.');
         }
     });
     it('should convert response message from Bot format to Wechat format correctly for forever upload', async () => {
-        const activityList = GetMockMessageActivityList();
+        const activityList = getMockMessageActivityList();
         for (let messageActivity of activityList) {
-            const MeidaResponse = await testMessageMapperForever.ToWeChatMessage(messageActivity);
+            const MeidaResponse = await testMessageMapperForever.toWeChatMessage(messageActivity);
             assert(MeidaResponse.length > 0, 'The number of responses should not be 0.');
         }
     });

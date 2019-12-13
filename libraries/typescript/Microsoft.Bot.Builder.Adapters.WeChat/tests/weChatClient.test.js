@@ -37,26 +37,26 @@ class MockWeChatClient extends WeChatClient {
     constructor(AppId, AppSecret, storage) {
         super(AppId, AppSecret, storage);
     }
-    async SendHttpRequestAsync(method, url, data = undefined, token = undefined, timeout = 10000) {
+    async sendHttpRequestAsync(method, url, data = undefined, token = undefined, timeout = 10000) {
         var result = WeChatResult;
         if (url.includes('cgi-bin/token')) {
             result = TokenResult;
         } else if (url.includes('upload?access_token')) {
-            result = MockTempMediaResult(MediaTypes.Image);
+            result = mockTempMediaResult(MediaTypes.Image);
         } else if (url.includes('add_material')) {
-            result = MockForeverMediaResult('foreverMedia');
+            result = mockForeverMediaResult('foreverMedia');
         } else if (url.includes('uploadnews')) {
-            result = MockTempMediaResult(MediaTypes.News);
+            result = mockTempMediaResult(MediaTypes.News);
         } else if (url.includes('add_news')) {
-            result = MockForeverMediaResult('foreverNews');
+            result = mockForeverMediaResult('foreverNews');
         } else if (url.includes('uploadimg')) {
-            result = MockForeverMediaResult('foreverImage');
+            result = mockForeverMediaResult('foreverImage');
         }
         return result;
     }
 }
 
-function MockTempMediaResult(type, mediaId = undefined) {
+function mockTempMediaResult(type, mediaId = undefined) {
     const tempMedia = {
         errcode: 0,
         errmsg: 'ok',
@@ -67,7 +67,7 @@ function MockTempMediaResult(type, mediaId = undefined) {
     return tempMedia;
 }
 
-function MockForeverMediaResult(mediaId = undefined) {
+function mockForeverMediaResult(mediaId = undefined) {
     const foreverMedia = {
         media_id: mediaId || 'mediaId',
         url: 'https://mediaUrl',
@@ -81,69 +81,69 @@ const testClient = new MockWeChatClient(AppId, AppSecret, storage);
 
 describe('WeChatClient', () => {
     it('should get correct access token', async () => {
-        const tokenResult = await testClient.GetAccessTokenAsync();
+        const tokenResult = await testClient.getAccessTokenAsync();
         assert.equal(tokenResult, 'testToken');
     });
     it('should upload media as temporary media', async () => {
-        const result = await testClient.UploadMediaAsync(MockAttachmentData, true, 10000);
+        const result = await testClient.uploadMediaAsync(MockAttachmentData, true, 10000);
         assert.equal(result.MediaId, 'mediaId');
     });
     it('should upload media as persistent media', async () => {
-        const result = await testClient.UploadMediaAsync(MockAttachmentData, false, 10000);
+        const result = await testClient.uploadMediaAsync(MockAttachmentData, false, 10000);
         assert.equal(result.MediaId, 'foreverMedia');
     });
     it('should upload news media temporarily', async () => {
-        const result = await testClient.UploadNewsAsync(MockNews, true);
+        const result = await testClient.uploadNewsAsync(MockNews, true);
         assert.equal(result.Type, MediaTypes.News);
     });
     it('should upload news media persistently', async () => {
-        const result = await testClient.UploadNewsAsync(MockNews, false);
+        const result = await testClient.uploadNewsAsync(MockNews, false);
         assert.equal(result.MediaId, 'foreverNews');
     });
     it('should upload image persistently', async () => {
-        const result = await testClient.UploadNewsImageAsync(MockAttachmentData);
+        const result = await testClient.uploadNewsImageAsync(MockAttachmentData);
         assert.equal(result.MediaId, 'foreverImage');
     });
     it('should send Text correctly', async () => {
-        var result = await testClient.SendTextAsync(openId, content);
+        var result = await testClient.sendTextAsync(openId, content);
         assert.equal(result.ErrorCode, 0);
-        result = await testClient.SendTextAsync(openId, content, 10000, customerServiceAccount);
+        result = await testClient.sendTextAsync(openId, content, 10000, customerServiceAccount);
         assert.equal(result.ErrorCode, 0);
     });
     it('should send Image correctly', async () => {
-        var result = await testClient.SendImageAsync(openId, mediaId);
+        var result = await testClient.sendImageAsync(openId, mediaId);
         assert.equal(result.ErrorCode, 0);
-        result = await testClient.SendImageAsync(openId, mediaId, 10000, customerServiceAccount);
+        result = await testClient.sendImageAsync(openId, mediaId, 10000, customerServiceAccount);
         assert.equal(result.ErrorCode, 0);
     });
     it('should send Music correctly', async () => {
-        var result = await testClient.SendMusicAsync(openId, title, description, musicUrl, highQualityMusicUrl, thumbMediaId);
+        var result = await testClient.sendMusicAsync(openId, title, description, musicUrl, highQualityMusicUrl, thumbMediaId);
         assert.equal(result.ErrorCode, 0);
-        result = await testClient.SendMusicAsync(openId, title, description, musicUrl, highQualityMusicUrl, thumbMediaId, 10000, customerServiceAccount);
+        result = await testClient.sendMusicAsync(openId, title, description, musicUrl, highQualityMusicUrl, thumbMediaId, 10000, customerServiceAccount);
         assert.equal(result.ErrorCode, 0);
     });
     it('should send Video correctly', async () => {
-        var result = await testClient.SendVideoAsync(openId, mediaId, title, description);
+        var result = await testClient.sendVideoAsync(openId, mediaId, title, description);
         assert.equal(result.ErrorCode, 0);
-        result = await testClient.SendVideoAsync(openId, mediaId, title, description, 10000, customerServiceAccount);
+        result = await testClient.sendVideoAsync(openId, mediaId, title, description, 10000, customerServiceAccount);
         assert.equal(result.ErrorCode, 0);
     });
     it('should send Voice correctly', async () => {
-        var result = await testClient.SendVoiceAsync(openId, mediaId);
+        var result = await testClient.sendVoiceAsync(openId, mediaId);
         assert.equal(result.ErrorCode, 0);
-        result = await testClient.SendVoiceAsync(openId, mediaId, 10000, customerServiceAccount);
+        result = await testClient.sendVoiceAsync(openId, mediaId, 10000, customerServiceAccount);
         assert.equal(result.ErrorCode, 0);
     });
     it('should send News correctly', async () => {
-        var result = await testClient.SendNewsAsync(openId, articles);
+        var result = await testClient.sendNewsAsync(openId, articles);
         assert.equal(result.ErrorCode, 0);
-        result = await testClient.SendNewsAsync(openId, articles, 10000, customerServiceAccount);
+        result = await testClient.sendNewsAsync(openId, articles, 10000, customerServiceAccount);
         assert.equal(result.ErrorCode, 0);
     });
     it('should send MPNews correctly', async () => {
-        var result = await testClient.SendMPNewsAsync(openId, mediaId);
+        var result = await testClient.sendMPNewsAsync(openId, mediaId);
         assert.equal(result.ErrorCode, 0);
-        result = await testClient.SendMPNewsAsync(openId, mediaId, 10000, customerServiceAccount);
+        result = await testClient.sendMPNewsAsync(openId, mediaId, 10000, customerServiceAccount);
         assert.equal(result.ErrorCode, 0);
     });
 });

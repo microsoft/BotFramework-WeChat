@@ -44,12 +44,12 @@ const xmlDecryptString = '<xml><ToUserName><![CDATA[gh_d13df7f4ef38]]></ToUserNa
 
 describe('My Message Cryptography', () => {
     it('should be able to decrypt the message correctly', () => {
-        assert.equal(MessageCryptography.DecryptMessage(requestRaw, secretInfo).replace(/(\r\n|\n|\r)/gm,''), xmlDecryptString);
+        assert.equal(MessageCryptography.decryptMessage(requestRaw, secretInfo).replace(/(\r\n|\n|\r)/gm,''), xmlDecryptString);
     });
     it('should throw error if the encodingAesKey is invalid', () => {
         assert.throws(
             () => {
-                MessageCryptography.DecryptMessage(requestRaw, secretInfoAESKeyError);
+                MessageCryptography.decryptMessage(requestRaw, secretInfoAESKeyError);
             },
             /^Error: Invalid EncodingAESKey.$/
         );
@@ -57,7 +57,7 @@ describe('My Message Cryptography', () => {
     it('should throw error if signature information is invalid', () => {
         assert.throws(
             () => {
-                MessageCryptography.DecryptMessage(requestRaw, secretInfoMsgSignatureError);
+                MessageCryptography.decryptMessage(requestRaw, secretInfoMsgSignatureError);
             },
             /^Error: Signature verification failed.$/
         );
@@ -65,7 +65,7 @@ describe('My Message Cryptography', () => {
     it('should throw error if the AppId is invalid', () => {
         assert.throws(
             () => {
-                MessageCryptography.DecryptMessage(requestRaw, secretInfoAppIdError);
+                MessageCryptography.decryptMessage(requestRaw, secretInfoAppIdError);
             },
             /^Error: AppId is invalid.$/
         );
