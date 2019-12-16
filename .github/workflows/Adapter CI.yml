@@ -10,48 +10,46 @@ on:
 
 jobs:
   job1:
-    build:
-      name: CI
-      runs-on: windows-latest
-      timeout-minutes: 20
+    name: CI
+    runs-on: windows-latest
+    timeout-minutes: 20
 
-      steps:
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.108
+    - name: Build Adapter
+      run: dotnet build
+      working-directory: libraries/csharp_dotnetcore/Microsoft.Bot.Builder.Adapters.WeChat
+    - name: Build Test Project
+      run: dotnet build
+      working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
+    - name: Run Tests
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
+    - name: Publish Coverage Result
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests/TestResults/coverage.info
+  job2:
+    name: TypeScript CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
       - uses: actions/checkout@v1
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v1
         with:
-          dotnet-version: 2.2.108
-      - name: Build Adapter
-        run: dotnet build
-        working-directory: libraries/csharp_dotnetcore/Microsoft.Bot.Builder.Adapters.WeChat
-      - name: Build Test Project
-        run: dotnet build
-        working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
-      - name: Run Tests
-        run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
-        working-directory: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests
-      - name: Publish Coverage Result
+          node-version: 12.13.1
+      - name: npm install, npm run test
+        run: |
+          npm install
+          npm run test
+      - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests/TestResults/coverage.info
-  job2:
-    build:
-      name: TypeScript CI
-      runs-on: ubuntu-latest
-      timeout-minutes: 20
-      
-      steps:
-        - uses: actions/checkout@v1
-        - name: Use Node.js
-          uses: actions/setup-node@v1
-          with:
-            node-version: 12.13.1
-        - name: npm install, npm run test
-          run: |
-            npm install
-            npm run test
-        - name: Coveralls
-          uses: coverallsapp/github-action@master
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
