@@ -13,7 +13,7 @@
   "dependencies": {
     "@types/node": "^10.12.18",
     "@azure/ms-rest-js": "1.2.6",
-    "botbuilder-core": "^4.5.3",
+    "botbuilder-core": "^4.7.0",
     "node-fetch": "^2.2.1",
     "adaptivecards": "1.1.0"
   },

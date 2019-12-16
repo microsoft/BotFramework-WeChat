@@ -46,12 +46,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.13.1
-    - name: npm install, npm run test
-      run: |
-        npm install
-        npm run test
+    - name: npm install
+      run: npm install
       working-directory: libraries/typescript
+    - name: Run Tests
+      run: npm run test
+      working-directory: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat/coverage/lcov.info
