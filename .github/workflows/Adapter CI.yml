@@ -10,7 +10,7 @@ on:
 
 jobs:
   job1:
-    name: CI
+    name: C# CI
     runs-on: windows-latest
     timeout-minutes: 20
 
