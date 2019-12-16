@@ -1,4 +1,3 @@
-const { VerificationHelper } = require('../lib/VerificationHelper');
 const { MessageCryptography } = require('../lib/messageCryptography');
 const assert = require('assert');
 const secretInfo = {
