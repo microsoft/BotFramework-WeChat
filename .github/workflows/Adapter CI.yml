@@ -10,7 +10,7 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  job_C#:
+  job_1:
     runs-on: windows-latest
     timeout-minutes: 20
 
@@ -34,7 +34,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests/TestResults/coverage.info
-  job_TypeScript:
+  job_2:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
