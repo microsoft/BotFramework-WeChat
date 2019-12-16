@@ -43,16 +43,17 @@ jobs:
       timeout-minutes: 20
 
       steps:
-        - uses: actions/checkout@v1
-        - name: Use Node.js
-          uses: actions/setup-node@v1
-          with:
-            node-version: 12.13.1
-        - name: npm install, npm run test
-          run: |
-            npm install
-            npm run test
-        - name: Coveralls
-          uses: coverallsapp/github-action@master
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.13.1
+      - name: npm install, npm run test
+        run: |
+          npm install
+          npm run test
+        working-directory: libraries/typescript
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
