@@ -83,17 +83,25 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
             var mockClient = new MockWeChatClient(settings, storage);
             var mockAttachemntData = MockDataUtility.GetMockAttachmentData();
             var result1 = await mockClient.UploadMediaAsync(mockAttachemntData, true, 10000) as UploadTemporaryMediaResult;
-            var result2 = await mockClient.UploadMediaAsync(mockAttachemntData, true, 10000) as UploadTemporaryMediaResult;
+            var cachedResult1 = await mockClient.UploadMediaAsync(mockAttachemntData, true, 10000) as UploadTemporaryMediaResult;
             var result3 = await mockClient.UploadNewsAsync(new News[] { new News { Title = "test" } }, true) as UploadTemporaryMediaResult;
+            var cachedResult3 = await mockClient.UploadNewsAsync(new News[] { new News { Title = "test" } }, true) as UploadTemporaryMediaResult;
             var result4 = await mockClient.UploadMediaAsync(mockAttachemntData, false, 10000) as UploadPersistentMediaResult;
+            var cachedResult4 = await mockClient.UploadMediaAsync(mockAttachemntData, false, 10000) as UploadPersistentMediaResult;
             var result5 = await mockClient.UploadNewsAsync(new News[] { new News { Title = "test" } }, false) as UploadPersistentMediaResult;
+            var cachedResult5 = await mockClient.UploadNewsAsync(new News[] { new News { Title = "test" } }, false) as UploadPersistentMediaResult;
             var result6 = await mockClient.UploadNewsImageAsync(mockAttachemntData);
+            var cachedResult6 = await mockClient.UploadNewsImageAsync(mockAttachemntData);
             Assert.Equal("mediaId", result1.MediaId);
-            Assert.Equal("mediaId", result2.MediaId);
+            Assert.Equal("mediaId", cachedResult1.MediaId);
             Assert.Equal(MediaTypes.News, result3.Type);
+            Assert.Equal(MediaTypes.News, cachedResult3.Type);
             Assert.Equal("foreverMedia", result4.MediaId);
+            Assert.Equal("foreverMedia", cachedResult4.MediaId);
             Assert.Equal("foreverNews", result5.MediaId);
+            Assert.Equal("foreverNews", cachedResult5.MediaId);
             Assert.Equal("foreverImage", result6.MediaId);
+            Assert.Equal("foreverImage", cachedResult6.MediaId);
         }
 
         /// <summary>
