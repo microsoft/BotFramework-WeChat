@@ -310,14 +310,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
 
         public const string ImageDataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKwAAACeCAYAAACvg+F+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAAhdEVYdENyZWF0aW9uIFRpbWUAMjAxOTowMzoxMyAxOTo0Mjo0OBCBEeIAAAG8SURBVHhe7dJBDQAgEMCwA/+egQcmlrSfGdg6z0DE/oUEw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phSTEsKYYlxbCkGJYUw5JiWFIMS4phCZm52U4FOCAVGHQAAAAASUVORK5CYII=";
 
-        public static readonly SecretInfo SecretInfo = new SecretInfo()
-        {
-            WebhookSignature = "4e17212123b3ce5a6b11643dc658af83fdb54c7d",
-            Timestamp = "1562066088",
-            Nonce = "236161902",
-            MessageSignature = "f3187a0efd9709c8f6550190147f43c279e9bc43",
-        };
-
         public static readonly WeChatSettings WeChatSettings = new WeChatSettings()
         {
             Token = "bmwipabotwx",
@@ -354,7 +346,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
             ErrorMessage = "ok",
         };
 
-        public static readonly MessageCryptography TestDecryptMsg = new MessageCryptography(SecretInfo, WeChatSettings);
+        public static readonly MessageCryptography TestDecryptMsg = new MessageCryptography(GetMockSecretInfo(), WeChatSettings);
         public static readonly MessageCryptography TestSignature = new MessageCryptography(SecretInfoMsgSignatureError, WeChatSettings);
 
         public static readonly TextResponse TextResponse = new TextResponse()
@@ -447,7 +439,16 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
             Articles = new List<Article>() { Article1, Article2 },
         };
 
-        public static SecretInfo GetMockSecretInfo() => SecretInfo;
+        public static SecretInfo GetMockSecretInfo()
+        {
+            return new SecretInfo()
+            {
+                WebhookSignature = "4e17212123b3ce5a6b11643dc658af83fdb54c7d",
+                Timestamp = "1562066088",
+                Nonce = "236161902",
+                MessageSignature = "f3187a0efd9709c8f6550190147f43c279e9bc43",
+            };
+        }
 
         public static ILogger GetMockLogger() => NullLogger.Instance;
 
@@ -701,6 +702,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
                 ErrorCode = 0,
                 ErrorMessage = "ok",
                 ThumbMediaId = "thumbMediaId",
+                CreatedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                 Type = type,
             };
             return uploadResult;
