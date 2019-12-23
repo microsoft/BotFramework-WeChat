@@ -174,23 +174,23 @@ export class WeChatAdapter extends BotAdapter {
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>, secretInfo: SecretInfo): Promise<void> {
         if (!req) {
-            throw new Error(`ArgumentNullException - Request is invalid.`);
+            throw new Error(`ArgumentError - Request is invalid.`);
         }
 
         if (!res) {
-            throw new Error(`ArgumentNullException - Response is invalid.`);
+            throw new Error(`ArgumentError - Response is invalid.`);
         }
 
         if (!logic) {
-            throw new Error(`ArgumentNullException - Bot logic is invalid.`);
+            throw new Error(`ArgumentError - Bot logic is invalid.`);
         }
 
         if (!secretInfo) {
-            throw new Error(`ArgumentNullException - Secret information is invalid.`);
+            throw new Error(`ArgumentError - Secret information is invalid.`);
         }
 
         if (!VerificationHelper.verifySignature(secretInfo.Signature, secretInfo.Timestamp, secretInfo.Nonce, this.settings.Token)) {
-            throw new Error('UnauthorizedAccessException - Signature verification failed');
+            throw new Error('UnauthorizedAccessException - Signature verification failed.');
         }
 
         secretInfo.Token = this.settings.Token;
@@ -267,10 +267,7 @@ export class WeChatAdapter extends BotAdapter {
             switch (response.MsgType) {
                 case ResponseMessageTypes.Text:
                     const textResponse = response as TextResponse;
-                    await this.weChatClient.sendTextAsync(
-                        openId,
-                        textResponse.Content
-                    );
+                    await this.weChatClient.sendTextAsync(openId, textResponse.Content);
                     break;
                 case ResponseMessageTypes.Image:
                     const imageResponse = response as ImageResponse;

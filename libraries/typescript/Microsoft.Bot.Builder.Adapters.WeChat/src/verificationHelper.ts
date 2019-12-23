@@ -19,15 +19,15 @@ export class VerificationHelper {
      * @param [postBody] Request body as string.
      * @returns Signature verification result.
      */
-    public static verifySignature(signature: string, timestamp: string, nonce: string, token: string = null, postBody: string = null): boolean {
+    public static verifySignature(signature: string, timestamp: string, nonce: string, token: string = undefined, postBody: string = undefined): boolean {
         if (!signature) {
-            throw new Error('ArgumentNullException - Request validation failed - null Signature');
+            throw new Error('ArgumentError - Request validation failed - invalid Signature.');
         }
         if (!timestamp) {
-            throw new Error('ArgumentNullException - Request validation failed - null Timestamp');
+            throw new Error('ArgumentError - Request validation failed - invalid Timestamp.');
         }
         if (!nonce) {
-            throw new Error('ArgumentNullException - Request validation failed - null Nonce');
+            throw new Error('ArgumentError - Request validation failed - invalid Nonce.');
         }
         return signature === generateSignature(token, timestamp, nonce, postBody);
     }
@@ -42,7 +42,7 @@ export class VerificationHelper {
  * @param [encryptedMessage] The encrypted message content from WeChat request.
  * @returns Generated signature.
  */
-function generateSignature(token: string, timestamp: string, nonce: string, encryptedMessage: string = null): string {
+function generateSignature(token: string, timestamp: string, nonce: string, encryptedMessage: string = undefined): string {
     const sortlist = [token, timestamp, nonce, encryptedMessage];
     sortlist.sort();
     const raw = sortlist.join('');

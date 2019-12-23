@@ -11,6 +11,14 @@ const settings = {
     UploadTemporaryMedia: true,
     passiveResponse: false
 };
+const passiveSettings = {
+    AppId: 'wx77f941c869071d99',
+    AppSecret: 'ae88532259999efbd5edd91a08703e7c',
+    Token: 'bmwipabotwx',
+    EncodingAESKey: 'P7PIjIGpA7axbjbffRoWYq7G0BsIaEpqdawIir4KqCt',
+    UploadTemporaryMedia: true,
+    passiveResponse: true
+};
 const reference = {
     activityId: '1234',
     channelId: 'test',
@@ -37,10 +45,10 @@ const secretInfoMsgSignatureError = {
     Token: 'bmwipabotwx',
     EncodingAesKey: 'P7PIjIGpA7axbjbffRoWYq7G0BsIaEpqdawIir4KqCt',
     AppId: 'wx77f941c869071d99',
-    Signature: '4e17212123b3ce5a6b11643dc658af83fdb54c7d',
+    Signature: 'f3187a0efd9709c8f6550190147f43c279e9bc43',
     Timestamp: '1562066088',
     Nonce: '236161902',
-    Msg_signature: '4e17212123b3ce5a6b11643dc658af83fdb54c7d',
+    Msg_signature: 'f3187a0efd9709c8f6550190147f43c279e9bc43',
 };
 const WeChatResult = {
     errcode: 0,
@@ -83,9 +91,9 @@ class MockAdapter extends WeChatAdapter {
     }
 }
 
-const WeChatAdapterTest = new MockAdapter(storage, settings);
-const incomingMessage = '<xml><ToUserName><![CDATA[gh_d13df7f4ef38]]></ToUserName><Encrypt><![CDATA[8VfmSJqZFzMlnaDohVD7I0T+9LIG1fT8kl221jOyL9TwkTJ38AZ9A6kMxvADvvxfg+azCEOEXtdVElhLs/roYyf25YfGH4kZp0O2t6XngOzwClG9HAhUV29OomouAqVpZ1ySqV60THKQ8E25N+fYF8RnXboae0r/ZTGnUJPuPwPVtbBj1dIGuFjpls+mnaSyg6Ag04FF5GcqO7exfEugQtNS44yQbmel/EKmxtvzz9CClJ3QnsHUODCMj5e6lYNSM7b84s+OBtKKsD0ObRnrAN5IfFLbDqK6twKlwTqHM0O1icSmfFo2MHT2+iizTcJfpbFnQeIj1zlSQdexvQ8fH9JwoSaHjQad/CyQ4D/PSxYi2Thu2ZFt5C2/NJ0ixL++GlOZpdaL/SQvxsVPrqsNhp7tteT69EVbpZux7c+eib4=]]></Encrypt></xml>';
-
+const weChatAdapterTest = new MockAdapter(storage, settings);
+const weChatAdapterPassive = new MockAdapter(storage, passiveSettings);
+const imcomingMessage = '<xml><ToUserName><![CDATA[gh_d13df7f4ef38]]></ToUserName><Encrypt><![CDATA[8VfmSJqZFzMlnaDohVD7I0T+9LIG1fT8kl221jOyL9TwkTJ38AZ9A6kMxvADvvxfg+azCEOEXtdVElhLs/roYyf25YfGH4kZp0O2t6XngOzwClG9HAhUV29OomouAqVpZ1ySqV60THKQ8E25N+fYF8RnXboae0r/ZTGnUJPuPwPVtbBj1dIGuFjpls+mnaSyg6Ag04FF5GcqO7exfEugQtNS44yQbmel/EKmxtvzz9CClJ3QnsHUODCMj5e6lYNSM7b84s+OBtKKsD0ObRnrAN5IfFLbDqK6twKlwTqHM0O1icSmfFo2MHT2+iizTcJfpbFnQeIj1zlSQdexvQ8fH9JwoSaHjQad/CyQ4D/PSxYi2Thu2ZFt5C2/NJ0ixL++GlOZpdaL/SQvxsVPrqsNhp7tteT69EVbpZux7c+eib4=]]></Encrypt></xml>';
 
 class MockRequest {
     constructor(body, headers) {
@@ -118,63 +126,90 @@ class MockResponse {
 
 describe('WeChatAdapter', () => {
     it('should processActivity()', async () => {
-        const req = new MockRequest(incomingMessage);
+        const req = new MockRequest(imcomingMessage);
         const res = new MockResponse();
-        await WeChatAdapterTest.processActivity(req, res, async (context) => {
+        await weChatAdapterTest.processActivity(req, res, async (context) => {
             await bot.run(context);
         }, secretInfo);
     });
 
     it('should processActivity() with passive response', async () => {
-        const req = new MockRequest(incomingMessage);
+        const req = new MockRequest(imcomingMessage);
         const res = new MockResponse();
-        await WeChatAdapterTest.processActivity(req, res, async (context) => {
+        await weChatAdapterPassive.processActivity(req, res, async (context) => {
             await bot.run(context);
         }, secretInfo);
     });
 
+    it('should throw error when deleteActivity()', async () => {
+        try {
+            await weChatAdapterTest.deleteActivity(undefined, undefined);
+        } catch (e) {
+            assert.equal(e.message, 'WeChat does not support deleting activities.');
+        }
+    });
+
+    it('should throw error when updateActivity()', async () => {
+        try {
+            await weChatAdapterTest.updateActivity(undefined, undefined);
+        } catch (e) {
+            assert.equal(e.message, 'WeChat does not support updating activities.');
+        }
+    });
+
     it('should throw error if request is undefined', async () => {
         try {
-            await WeChatAdapterTest.processActivity(undefined, undefined, undefined, secretInfo);
+            await weChatAdapterTest.processActivity(undefined, undefined, undefined, secretInfo);
         } catch (e) {
-            assert.equal(e.message, 'ArgumentNullException - Request is invalid.');
+            assert.equal(e.message, 'ArgumentError - Request is invalid.');
         }
     });
 
     it('should throw error if response is undefined', async () => {
-        const req = new MockRequest(incomingMessage);
+        const req = new MockRequest(imcomingMessage);
         try {
-            await WeChatAdapterTest.processActivity(req, undefined, undefined, secretInfo);
+            await weChatAdapterTest.processActivity(req, undefined, undefined, secretInfo);
         } catch (e) {
-            assert.equal(e.message, 'ArgumentNullException - Response is invalid.');
+            assert.equal(e.message, 'ArgumentError - Response is invalid.');
         }
     });
 
     it('should throw error if bot logic is undefined', async () => {
-        const req = new MockRequest(incomingMessage);
+        const req = new MockRequest(imcomingMessage);
         const res = new MockResponse();
         try {
-            await WeChatAdapterTest.processActivity(req, res, undefined, secretInfo);
+            await weChatAdapterTest.processActivity(req, res, undefined, secretInfo);
         } catch (e) {
-            assert.equal(e.message, 'ArgumentNullException - Bot logic is invalid.');
+            assert.equal(e.message, 'ArgumentError - Bot logic is invalid.');
         }
     });
 
     it('should throw error if secret information is undefined', async () => {
-        const req = new MockRequest(incomingMessage);
+        const req = new MockRequest(imcomingMessage);
         const res = new MockResponse();
         try {
-            await WeChatAdapterTest.processActivity(req, res, async (context) => {
+            await weChatAdapterTest.processActivity(req, res, async (context) => {
                 await bot.run(context);
             }, undefined);
         } catch (e) {
-            assert.equal(e.message, 'ArgumentNullException - Secret information is invalid.');
+            assert.equal(e.message, 'ArgumentError - Secret information is invalid.');
+        }
+    });
+    it('should throw error if secret information is undefined', async () => {
+        const req = new MockRequest(imcomingMessage);
+        const res = new MockResponse();
+        try {
+            await weChatAdapterTest.processActivity(req, res, async (context) => {
+                await bot.run(context);
+            }, secretInfoMsgSignatureError);
+        } catch (e) {
+            assert.equal(e.message, 'UnauthorizedAccessException - Signature verification failed.');
         }
     });
 
     it('should continueConversation()', (done) => {
         let called = false;
-        WeChatAdapterTest.continueConversation(reference, (context) => {
+        weChatAdapterTest.continueConversation(reference, (context) => {
             assert(context, `context not passed.`);
             assert(context.activity, `context has no request.`);
             assert(context.activity.type === 'event', `request has invalid type.`);

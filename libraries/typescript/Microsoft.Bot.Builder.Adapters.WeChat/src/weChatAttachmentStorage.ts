@@ -52,7 +52,6 @@ export class WeChatAttachmentStorage {
      * @param key Item key to remove from the store.
      */
     async deleteAsync(key: string): Promise<void> {
-        const keys: string[] = [key];
-        await this.storage.delete(keys);
+        await this.storage.delete([key]);
     }
 }

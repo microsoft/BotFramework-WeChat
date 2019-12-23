@@ -56,8 +56,7 @@ export class WeChatClient {
                 articles: newsList
             };
             const result = await this.sendHttpRequestAsync('POST', url, data, undefined, timeout);
-            let uploadResult: any;
-            uploadResult = isTemporary ? new UploadTemporaryMediaResult(result) : new UploadPersistentMediaResult(result);
+            const uploadResult = isTemporary ? new UploadTemporaryMediaResult(result) : new UploadPersistentMediaResult(result);
             await this.checkAndUpdateAttachmentStorage(mediaHash, uploadResult);
             return uploadResult;
         }
@@ -119,7 +118,7 @@ export class WeChatClient {
      * Get access token used to call WeChat API.
      * @returns  Access token string.
      */
-    public async getAccessTokenAsync(foreceRefresh: boolean = false): Promise<string> {
+    public async getAccessTokenAsync(foreceRefresh = false): Promise<string> {
         const token = await this.TokenStorage.getAsync(this.AppId);
         if (!token || token.ExpireTime <= Date.now().valueOf() || foreceRefresh) {
             const url = this.getAccessTokenEndPoint(this.AppId, this.AppSecret);
@@ -135,7 +134,7 @@ export class WeChatClient {
                 await this.TokenStorage.saveAsync(this.AppId, token);
                 return token.Token;
             } else {
-                throw new Error(`${JSON.stringify(tokenResult)}`);
+                throw new Error(`${ JSON.stringify(tokenResult) }`);
             }
         } else {
             return token.Token;
@@ -531,7 +530,7 @@ export class WeChatClient {
      * @returns Uploaded result from WeChat.
      */
     private async processUploadMediaAsync(attachmentData: AttachmentData, url: string, isTemporaryMeida: boolean, timeout = 10000): Promise<UploadMediaResult> {
-        let form = new FormData();
+        const form = new FormData();
         let headers: any;
         const ext = this.getMediaExtension(attachmentData.type);
         form.append('media', Buffer.from(attachmentData.originalBase64), {
@@ -545,7 +544,7 @@ export class WeChatClient {
                 introduction: 'INTRODUCTION'
             });
         }
-        headers = { 'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}` };
+        headers = { 'Content-Type': `multipart/form-data; boundary=${ form.getBoundary() }` };
         const response = await this.sendHttpRequestAsync('POST', url, form, headers, timeout);
         if (isTemporaryMeida) {
             return new UploadTemporaryMediaResult(response);
@@ -560,10 +559,7 @@ export class WeChatClient {
      * @param uploadResult Upload media result.
      * @returns  Task of updating media.
      */
-    private async checkAndUpdateAttachmentStorage(
-        mediaHash: string,
-        uploadResult: UploadMediaResult
-    ) {
+    private async checkAndUpdateAttachmentStorage(mediaHash: string, uploadResult: UploadMediaResult): Promise<any> {
         if (!uploadResult.ErrorCode) {
             await this.AttachmentStorage.saveAsync(mediaHash, uploadResult);
         } else {
@@ -574,21 +570,21 @@ export class WeChatClient {
     /**
      * Private method to get access token endpoint.
      */
-    private getAccessTokenEndPoint(appId: string, appSecret: string) {
+    private getAccessTokenEndPoint(appId: string, appSecret: string): string {
         return `${ this.ApiHost }/cgi-bin/token?grant_type=client_credential&appid=${ appId }&secret=${ appSecret }`;
     }
 
     /**
      * Private method to get message api endpoint.
      */
-    private getMessageApiEndPoint(accessToken: string) {
+    private getMessageApiEndPoint(accessToken: string): string {
         return `${ this.ApiHost }/cgi-bin/message/custom/send?access_token=${ accessToken }`;
     }
 
     /**
      * Private method to get upload media endpoint.
      */
-    private getUploadMediaEndPoint(accessToken: string, type: string, isTemporaryMeida: boolean) {
+    private getUploadMediaEndPoint(accessToken: string, type: string, isTemporaryMeida: boolean): string {
         if (isTemporaryMeida) {
             return `${ this.ApiHost }/cgi-bin/media/upload?access_token=${ accessToken }&type=${ type }`;
         }
@@ -598,18 +594,18 @@ export class WeChatClient {
     /**
      * Private method to get upload news endpoint.
      */
-    private getUploadNewsEndPoint(accessToken: string, isTemporary: boolean) {
+    private getUploadNewsEndPoint(accessToken: string, isTemporary: boolean): string {
         if (isTemporary) {
             return `${ this.ApiHost }/cgi-bin/media/uploadnews?access_token=${ accessToken }`;
         }
         return `${ this.ApiHost }/cgi-bin/material/add_news?access_token=${ accessToken }`;
     }
 
-    private getAcquireMediaUrlEndPoint(accessToken: string) {
+    private getAcquireMediaUrlEndPoint(accessToken: string): string {
         return `${ this.ApiHost }/cgi-bin/media/uploadimg?access_token=${ accessToken }`;
     }
 
-    private getMediaExtension(type: string) {
+    private getMediaExtension(type: string): string {
         if (type.includes(MediaTypes.Image) || type.includes(MediaTypes.Thumb)) {
             return '.jpg';
         }
