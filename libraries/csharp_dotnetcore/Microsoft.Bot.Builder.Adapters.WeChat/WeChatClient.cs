@@ -45,6 +45,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         private readonly WeChatAttachmentStorage _attachmentStorage;
         private readonly AccessTokenStorage _tokenStorage;
         private readonly IAttachmentHash _attachmentHash;
+        private SemaphoreSlim _semaphore;
 
         public WeChatClient(
             WeChatSettings settings,
@@ -56,6 +57,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             _tokenStorage = new AccessTokenStorage(storage);
             _logger = logger ?? NullLogger.Instance;
             _attachmentHash = new AttachmentHash();
+            _semaphore = new SemaphoreSlim(1);
         }
 
         /// <summary>
@@ -115,21 +117,26 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         public virtual async Task<string> GetAccessTokenAsync(bool forceRefresh = false)
         {
             var token = await _tokenStorage.GetAsync(_settings.AppId).ConfigureAwait(false);
+
+            // Double checked locking here to reduce the time cost.
             if (token == null || forceRefresh)
             {
-                var url = GetAccessTokenEndPoint(_settings.AppId, _settings.AppSecret);
-                var bytes = await SendHttpRequestAsync(HttpMethod.Get, url).ConfigureAwait(false);
-                var tokenResult = ConvertBytesToType<AccessTokenResult>(bytes);
-                CheckWeChatApiResponse(tokenResult);
-
-                token = new WeChatAccessToken()
+                try
                 {
-                    AppId = _settings.AppId,
-                    Secret = _settings.AppSecret,
-                    ExpireTime = DateTimeOffset.UtcNow.AddSeconds(tokenResult.ExpireIn),
-                    Token = tokenResult.Token,
-                };
-                await _tokenStorage.SaveAsync(_settings.AppId, token).ConfigureAwait(false);
+                    await _semaphore.WaitAsync().ConfigureAwait(false);
+
+                    // Making get and update access token as a transaction.
+                    // Ensure only one thread can update token and other thread won't get the expired token when updating.
+                    token = await _tokenStorage.GetAsync(_settings.AppId).ConfigureAwait(false);
+                    if (token == null || forceRefresh)
+                    {
+                        token = await UpdateAccessTokenAsync().ConfigureAwait(false);
+                    }
+                }
+                finally
+                {
+                    _semaphore.Release();
+                }
             }
 
             return token.Token;
@@ -610,6 +617,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 {
                     _tokenStorage.Dispose();
                 }
+
+                if (_semaphore != null)
+                {
+                    _semaphore.Dispose();
+                }
             }
         }
 
@@ -697,6 +709,32 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             return $".{ext}";
         }
 
+        /// <summary>
+        /// Get new access token from WeChat and update current cached token result.
+        /// </summary>
+        /// <returns>A new <seealso cref="WeChatAccessToken"/> of current account.</returns>
+        private async Task<WeChatAccessToken> UpdateAccessTokenAsync()
+        {
+            var url = GetAccessTokenEndPoint(_settings.AppId, _settings.AppSecret);
+            var bytes = await SendHttpRequestAsync(HttpMethod.Get, url).ConfigureAwait(false);
+            var tokenResult = ConvertBytesToType<AccessTokenResult>(bytes);
+            CheckWeChatApiResponse(tokenResult);
+
+            var newToken = new WeChatAccessToken()
+            {
+                AppId = _settings.AppId,
+                Secret = _settings.AppSecret,
+                ExpireTime = DateTimeOffset.UtcNow.AddSeconds(tokenResult.ExpireIn),
+                Token = tokenResult.Token,
+            };
+            await _tokenStorage.SaveAsync(_settings.AppId, newToken).ConfigureAwait(false);
+            return newToken;
+        }
+
+        /// <summary>
+        /// Get WeChat message api endpoint URL.
+        /// </summary>
+        /// <returns>The meesage api URL value as a string.</returns>
         private async Task<string> GetMessageApiEndPoint()
         {
             var accessToken = await GetAccessTokenAsync().ConfigureAwait(false);

@@ -45,7 +45,8 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
                 var keys = new string[] { key };
                 var result = await _storage.ReadAsync<WeChatAccessToken>(keys, cancellationToken).ConfigureAwait(false);
                 result.TryGetValue(key, out var wechatResult);
-                if (wechatResult == null || wechatResult.ExpireTime.ToUnixTimeSeconds() <= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+
+                if (IfTokenExpired(wechatResult))
                 {
                     return null;
                 }
@@ -89,6 +90,22 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
                     _semaphore = null;
                 }
             }
+        }
+
+        private bool IfTokenExpired(WeChatAccessToken tokenResult)
+        {
+            if (tokenResult == null)
+            {
+                return true;
+            }
+
+            // Return true when token is nearly expired.
+            if (tokenResult.ExpireTime.ToUnixTimeSeconds() - DateTimeOffset.UtcNow.ToUnixTimeSeconds() <= 10)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
