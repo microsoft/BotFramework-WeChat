@@ -158,6 +158,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             {
                 var uploadResult = await UploadMediaAsync(attachmentData, url, isTemporary, timeout).ConfigureAwait(false);
                 CheckWeChatApiResponse(uploadResult);
+                uploadResult.ETag = "*";
                 await _attachmentStorage.SaveAsync(mediaHash, uploadResult).ConfigureAwait(false);
                 return uploadResult;
             }
@@ -181,6 +182,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 var url = await GetAcquireMediaUrlEndPoint().ConfigureAwait(false);
                 var uploadResult = await UploadMediaAsync(attachmentData, url, false, timeout).ConfigureAwait(false);
                 CheckWeChatApiResponse(uploadResult);
+                uploadResult.ETag = "*";
                 await _attachmentStorage.SaveAsync(mediaHash, uploadResult).ConfigureAwait(false);
                 return uploadResult;
             }
@@ -218,6 +220,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 }
 
                 CheckWeChatApiResponse(uploadResult);
+                uploadResult.ETag = "*";
                 await _attachmentStorage.SaveAsync(mediaHash, uploadResult).ConfigureAwait(false);
                 return uploadResult;
             }
@@ -726,6 +729,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 Secret = _settings.AppSecret,
                 ExpireTime = DateTimeOffset.UtcNow.AddSeconds(tokenResult.ExpireIn),
                 Token = tokenResult.Token,
+                ETag = "*",
             };
             await _tokenStorage.SaveAsync(_settings.AppId, newToken).ConfigureAwait(false);
             return newToken;

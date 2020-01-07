@@ -5,7 +5,7 @@ using System;
 
 namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
 {
-    public class WeChatAccessToken
+    public class WeChatAccessToken : IStoreItem
     {
         public WeChatAccessToken()
         {
@@ -19,5 +19,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         public string Secret { get; set; }
 
         public DateTimeOffset ExpireTime { get; set; }
+
+        public string ETag { get; set; }
     }
 }
