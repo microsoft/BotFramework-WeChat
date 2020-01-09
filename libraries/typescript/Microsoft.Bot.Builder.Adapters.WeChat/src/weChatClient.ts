@@ -129,7 +129,8 @@ export class WeChatClient {
                     AppId: this.AppId,
                     Secret: this.AppSecret,
                     ExpireTime: Date.now().valueOf() + tokenResult.ExpireIn * 1000,
-                    Token: tokenResult.Token
+                    Token: tokenResult.Token,
+                    eTag: '*'
                 };
                 await this.TokenStorage.saveAsync(this.AppId, token);
                 return token.Token;
@@ -531,7 +532,6 @@ export class WeChatClient {
      */
     private async processUploadMediaAsync(attachmentData: AttachmentData, url: string, isTemporaryMeida: boolean, timeout = 10000): Promise<UploadMediaResult> {
         const form = new FormData();
-        let headers: any;
         const ext = this.getMediaExtension(attachmentData.type);
         form.append('media', Buffer.from(attachmentData.originalBase64), {
             contentType: attachmentData.type,
@@ -544,7 +544,7 @@ export class WeChatClient {
                 introduction: 'INTRODUCTION'
             });
         }
-        headers = { 'Content-Type': `multipart/form-data; boundary=${ form.getBoundary() }` };
+        const headers = new HttpHeaders({ 'Content-Type': `multipart/form-data; boundary=${ form.getBoundary() }` });
         const response = await this.sendHttpRequestAsync('POST', url, form, headers, timeout);
         if (isTemporaryMeida) {
             return new UploadTemporaryMediaResult(response);

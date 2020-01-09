@@ -207,6 +207,11 @@ describe('WeChatAdapter', () => {
         }
     });
 
+    it('should return correct access token', async () => {
+        const accessToken = await weChatAdapterTest.getWeChatAccessToken(true);
+        assert.equal(accessToken, TokenResult.access_token);
+    });
+
     it('should continueConversation()', (done) => {
         let called = false;
         weChatAdapterTest.continueConversation(reference, (context) => {
