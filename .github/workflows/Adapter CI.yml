@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  build:
-    name: CI
+  job_dotnet:
+    name: DotNet CI
     runs-on: windows-latest
     timeout-minutes: 20
 
@@ -34,3 +34,26 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: libraries/csharp_dotnetcore/tests/Microsoft.Bot.Builder.Adapters.WeChat.Tests/TestResults/coverage.info
+        
+  job_typescript:
+    name: TypeScript CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.13.1
+    - name: npm install
+      run: npm install
+      working-directory: libraries/typescript
+    - name: Run Tests
+      run: npm run test
+      working-directory: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat/coverage/lcov.info
