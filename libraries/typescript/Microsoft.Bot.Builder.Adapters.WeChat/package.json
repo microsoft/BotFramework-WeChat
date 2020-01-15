@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^12.6.9",
+    "@types/node": "^10.12.18",
     "@azure/ms-rest-js": "1.2.6",
     "adaptivecards": "1.1.0",
     "botbuilder-core": "^4.7.0",
