@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { ActivityHandler } = require('botbuilder');
+const { ActivityHandler } = require('botbuilder-core');
 
 class EchoBot extends ActivityHandler {
     constructor() {
