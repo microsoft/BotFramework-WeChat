@@ -1,6 +1,6 @@
 {
   "name": "botframework-wechat",
-  "version": "4.1.6",
+  "version": "4.0.0",
   "description": "botframework wechat adapter",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
@@ -9,21 +9,34 @@
     "clean": "erase /q /s .\\lib",
     "build": "tsc"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/BotFramework-WeChat.git"
+  },
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^10.12.18",
     "@azure/ms-rest-js": "1.2.6",
+    "adaptivecards": "1.1.0",
     "botbuilder-core": "^4.7.0",
-    "node-fetch": "^2.2.1",
-    "adaptivecards": "1.1.0"
+    "form-data": "^3.0.0",
+    "node-fetch": "2.6.0",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "@types/node": "^12.6.9",
     "@types/mocha": "^2.2.47",
+    "@types/form-data": "2.5.0",
+    "@types/node-fetch": "1.6.9",
     "dotenv": "^5.0.1",
     "mocha": "^5.2.0",
     "nyc": "^11.4.1",
-    "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0"
+    "ts-node": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
+    "@typescript-eslint/parser": "^1.10.2",
+    "eslint-plugin-only-warn": "^1.0.1",
+    "eslint": "^5.16.0",
+    "coveralls": "^3.0.4",
+    "typescript": "^3.7.3"
   },
   "files": [
     "/lib",
