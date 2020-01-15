@@ -48,7 +48,7 @@ jobs:
         node-version: 12.13.1
     - name: npm install
       run: npm install
-      working-directory: libraries/typescript
+      working-directory: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
     - name: Run Tests
       run: npm run test
       working-directory: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
