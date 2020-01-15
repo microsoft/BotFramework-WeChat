@@ -15,6 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^12.6.9",
     "@azure/ms-rest-js": "1.2.6",
     "adaptivecards": "1.1.0",
     "botbuilder-core": "^4.7.0",
@@ -23,7 +24,6 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@types/node": "^12.6.9",
     "@types/mocha": "^2.2.47",
     "@types/form-data": "2.5.0",
     "@types/node-fetch": "1.6.9",
