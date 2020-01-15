@@ -13,10 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.Bot.Builder.Adapters.WeChat\Microsoft.Bot.Builder.Adapters.WeChat.csproj" />
+    <PackageReference Include="Microsoft.Bot.Builder.Adapters.WeChat" Version="4.0.0-preview-99404" />
   </ItemGroup>
 
   <ItemGroup>
