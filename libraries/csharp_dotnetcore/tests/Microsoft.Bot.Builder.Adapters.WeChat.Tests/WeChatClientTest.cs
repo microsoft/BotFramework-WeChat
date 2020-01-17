@@ -1,8 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Adapters.WeChat.Schema;
@@ -92,6 +95,23 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
             var cachedResult5 = await mockClient.UploadNewsAsync(new News[] { new News { Title = "test" } }, false) as UploadPersistentMediaResult;
             var result6 = await mockClient.UploadNewsImageAsync(mockAttachemntData);
             var cachedResult6 = await mockClient.UploadNewsImageAsync(mockAttachemntData);
+
+            mockAttachemntData.Type = string.Empty;
+            mockAttachemntData.OriginalBase64[mockAttachemntData.OriginalBase64.Length - 1] = 0;
+            await mockClient.UploadMediaAsync(mockAttachemntData, true, 10000);
+
+            mockAttachemntData.Type = "image";
+            mockAttachemntData.OriginalBase64[mockAttachemntData.OriginalBase64.Length - 1] = 1;
+            await mockClient.UploadMediaAsync(mockAttachemntData, true, 10000);
+
+            mockAttachemntData.Type = "video";
+            mockAttachemntData.OriginalBase64[mockAttachemntData.OriginalBase64.Length - 1] = 2;
+            await mockClient.UploadMediaAsync(mockAttachemntData, true, 10000);
+
+            mockAttachemntData.Type = "voice";
+            mockAttachemntData.OriginalBase64[mockAttachemntData.OriginalBase64.Length - 1] = 3;
+            await mockClient.UploadMediaAsync(mockAttachemntData, true, 10000);
+
             Assert.Equal("mediaId", result1.MediaId);
             Assert.Equal("mediaId", cachedResult1.MediaId);
             Assert.Equal(MediaTypes.News, result3.Type);
@@ -187,6 +207,31 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
             var result = testClient.SendMPNewsAsync(openId, mediaId).Result;
             Assert.Equal(0, result.ErrorCode);
             result = testClient.SendMPNewsAsync(openId, mediaId, customerServiceAccount: "test").Result;
+            Assert.Equal(0, result.ErrorCode);
+        }
+
+        /// <summary>
+        /// MessageMenu message test.
+        /// </summary>
+        [Fact]
+        public void SendMessageMenuAsyncTest()
+        {
+            var menuItems = new List<MenuItem>();
+            var item = new MenuItem()
+            {
+                Id = "id",
+                Content = "content",
+            };
+            menuItems.Add(item);
+            var messageMenu = new MessageMenu()
+            {
+                HeaderContent = "menu_header",
+                TailContent = "menu_tail",
+                MenuItems = menuItems,
+            };
+            var result = testClient.SendMessageMenuAsync(openId, messageMenu).Result;
+            Assert.Equal(0, result.ErrorCode);
+            result = testClient.SendMessageMenuAsync(openId, messageMenu, customerServiceAccount: "test").Result;
             Assert.Equal(0, result.ErrorCode);
         }
     }
