@@ -33,6 +33,14 @@ steps:
   displayName: 'npm install, build and run tests'
   workingDirectory: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
 
+- task: Npm@1
+  displayName: 'npm pack botframework-wechat'
+  inputs:
+    command: custom
+    workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+    verbose: false
+    customCommand: pack
+
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   inputs:
@@ -41,8 +49,9 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
   inputs:
-    SourceFolder: ./.output
+    SourceFolder: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
     Contents: '**/*.tgz'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     flattenFolders: true
+
 
