@@ -41,11 +41,6 @@ steps:
     verbose: false
     customCommand: pack
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    ArtifactName: 'drop'
-
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
   inputs:
@@ -53,5 +48,12 @@ steps:
     Contents: '**/*.tgz'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    ArtifactName: 'drop'
+
+
 
 
