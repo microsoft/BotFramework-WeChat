@@ -1,58 +1,75 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+#
+# Build Botframework-WeChat on Windows agent
+#
 
-trigger:
-  batch: true
+# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
+name: $(Build.BuildId)
+
+pool:
+  name: Hosted Windows 2019 with VS2019
+
+pr:
   branches:
     include:
-    - master
+     - master
   paths:
+    include:
+      - '*'
     exclude:
         - doc/*
         - libraries/csharp_dotnetcore/*
         - samples/*
 
-pr:
-- master
+jobs:
+  - job: CLI
+    variables:
+      buildVersion: '4.0.0-preview.$(Build.BuildId)'
+      _version: ${{coalesce(variables.version, variables.buildVersion)}}
 
-pool:
-  vmImage: 'ubuntu-latest'
+    steps:
+    - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+      displayName: 'Tag Build with version number'
+      inputs:
+        tags: 'Version=$(_version)'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+    - task: NodeTool@0
+      displayName: 'Use Node 12.x'
+      inputs:
+        versionSpec: '12.x'
 
-- script: |
-    npm install
-    npm run build
-    npm run test
-  displayName: 'npm install, build and run tests'
-  workingDirectory: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        command: 'install'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+    
+    - task: Npm@1
+      displayName: 'npm run test'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        customCommand: 'run test'
 
-- task: Npm@1
-  displayName: 'npm pack botframework-wechat'
-  inputs:
-    command: custom
-    workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
-    verbose: false
-    customCommand: pack
+    - task: Npm@1
+      displayName: 'npm pack botframework-wechat'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        verbose: false
+        customCommand: 'pack'
 
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    SourceFolder: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
-    Contents: '**/*.tgz'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    flattenFolders: true
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
+        Contents: '**/*.tgz'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        flattenFolders: true
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    ArtifactName: 'drop'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+      inputs:
+        ArtifactName: 'drop'
 
 
 
