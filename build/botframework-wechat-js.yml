@@ -51,6 +51,13 @@ jobs:
         customCommand: 'run test'
 
     - task: Npm@1
+      displayName: 'npm run build'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        customCommand: 'run build'
+
+    - task: Npm@1
       displayName: 'npm pack botframework-wechat'
       inputs:
         command: 'custom'
