@@ -21,7 +21,7 @@ pr:
         - samples/*
 
 jobs:
-  - job: CLI
+  - job: WeChat
     variables:
       buildVersion: '4.0.0-preview.$(Build.BuildId)'
       _version: ${{coalesce(variables.version, variables.buildVersion)}}
@@ -42,13 +42,6 @@ jobs:
       inputs:
         command: 'install'
         workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
-    
-    - task: Npm@1
-      displayName: 'npm run test'
-      inputs:
-        command: 'custom'
-        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
-        customCommand: 'run test'
 
     - task: Npm@1
       displayName: 'npm run build'
@@ -56,6 +49,13 @@ jobs:
         command: 'custom'
         workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
         customCommand: 'run build'
+
+    - task: Npm@1
+      displayName: 'npm run test'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        customCommand: 'run test'
 
     - task: Npm@1
       displayName: 'npm pack botframework-wechat'
