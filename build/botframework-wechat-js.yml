@@ -43,6 +43,15 @@ jobs:
         command: 'install'
         workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
 
+    - task: Bash@3
+      displayName: 'Replace version number in package.json file'
+      inputs:
+        targetType: 'inline'
+        script: |
+          set -o xtrace
+          sed -i '' 's/${Version}/$(_version)/g' package.json
+        workingDirectory: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+
     - task: Npm@1
       displayName: 'npm run build'
       inputs:
