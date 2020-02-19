@@ -16,6 +16,8 @@
   "bugs": {
     "url": "https://github.com/microsoft/BotFramework-WeChat/issues"
   },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "dependencies": {
     "@azure/ms-rest-js": "1.2.6",
     "adaptivecards": "1.1.0",
@@ -39,6 +41,11 @@
     "eslint": "^5.16.0",
     "coveralls": "^3.0.4",
     "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "test": "tsc && nyc mocha tests/",
+    "clean": "erase /q /s .\\lib",
+    "build": "tsc"
   },
   "files": [
     "/lib",
