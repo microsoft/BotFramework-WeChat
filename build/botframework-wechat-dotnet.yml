@@ -11,9 +11,6 @@ variables:
   BuildConfiguration: Debug
   BuildPlatform: Any CPU
   CoverallsToken: define this in Azure
-  GitHubCommentApiKey: define this in Azure
-  IsBuildServer: true # This activates package versioning in the projects in Microsoft.Bot.Builder.sln.
-  MSBuildArguments: -p:SignAssembly=false -p:delaySign=false
   Parameters.solution: libraries/csharp_dotnetcore/csharp_dotnetcore.sln
 pool:
   name: Hosted Windows 2019 with VS2019
