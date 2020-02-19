@@ -1,4 +1,4 @@
-# WeChat Adapter for BotFramework ***_[PREVIEW]_***
+## WeChat Adapter for BotFramework ***_[PREVIEW]_***
 
 This is the Node.js version of WeChat Adapter for BotFramework.
 
@@ -7,22 +7,18 @@ This is the Node.js version of WeChat Adapter for BotFramework.
 - [GitHub Repo](https://github.com/microsoft/BotFramework-WeChat)
 - [Report Issues](https://github.com/microsoft/BotFramework-WeChat/issues)
 
-## Installing
-To add the latset published version of this package to your bot:
-
-```bash
-npm install --save botframework-wechat
-```
-
-#### Use the Daily Build
-
-To get access to the daily builds of this library, configure npm to use the MyGet feed before installing.
-
+### Installing
+As we are the preview version, please configure npm to use the MyGet feed before installing.
 ```bash
 npm config set registry https://botbuilder.myget.org/F/botframework-wechat/npm/
 ```
 
-To reset the registry in order to get the latest published version, run:
+Then add the published version of this package to your bot:
+```bash
+npm install --save botframework-wechat
+```
+
+To reset the registry, run:
 ```bash
 npm config set registry https://registry.npmjs.org/
 ```
