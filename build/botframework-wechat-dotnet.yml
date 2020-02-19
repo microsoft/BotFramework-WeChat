@@ -1,0 +1,78 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+name: $(Build.BuildId)
+variables:
+  BuildConfiguration: Debug
+  BuildPlatform: Any CPU
+  CoverallsToken: define this in Azure
+  Parameters.solution: libraries/csharp_dotnetcore/csharp_dotnetcore.sln
+pool:
+  name: Hosted Windows 2019 with VS2019
+  demands:
+  - msbuild
+  - visualstudio
+
+steps:
+- powershell: 'gci env:* | sort-object name | Format-Table -AutoSize -Wrap'
+  displayName: 'Display env vars'
+
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 4.9.1'
+  inputs:
+    versionSpec: 4.9.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '$(Parameters.solution)'
+
+- task: VSBuild@1
+  displayName: 'Build solution libraries/csharp_dotnetcore/csharp_dotnetcore.sln'
+  inputs:
+    solution: '$(Parameters.solution)'
+    vsVersion: "latest"
+    msbuildArgs: '-p:SignAssembly=false -p:delaySign=false'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test (release)'
+  inputs:
+    command: test
+    projects: |
+     libraries/csharp_dotnetcore/Tests/**/*Tests.csproj
+     
+    arguments: '-v n  --configuration release --no-build --no-restore --filter TestCategory!=IgnoreInAutomatedBuild --collect:"Code Coverage"'
+  condition: eq(variables['BuildConfiguration'],'Release')
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test (debug)'
+  inputs:
+    command: test
+    projects: |
+     libraries/csharp_dotnetcore/Tests/**/*Tests.csproj
+     
+    arguments: '-v n  --configuration debug --no-build --no-restore --filter TestCategory!=IgnoreInAutomatedBuild --collect:"Code Coverage"'
+  condition: eq(variables['BuildConfiguration'],'Debug')
+
+- script: |
+   cd ..
+   dir *.* /s
+  displayName: 'Dir workspace'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: build folder'
+  inputs:
+    PathtoPublish: build
+    ArtifactName: build
+
+- script: |
+   cd ..
+   dir *.* /s
+  displayName: 'Dir workspace'

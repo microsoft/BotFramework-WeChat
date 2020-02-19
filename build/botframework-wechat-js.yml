@@ -1,0 +1,90 @@
+#
+# Build Botframework-WeChat on Windows agent
+#
+
+# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
+name: $(Build.BuildId)
+
+pool:
+  name: Hosted Windows 2019 with VS2019
+
+pr:
+  branches:
+    include:
+     - master
+  paths:
+    include:
+      - '*'
+    exclude:
+        - doc/*
+        - libraries/csharp_dotnetcore/*
+        - samples/*
+
+jobs:
+  - job: WeChat
+    variables:
+      buildVersion: '4.0.0-preview.$(Build.BuildId)'
+      _version: ${{coalesce(variables.version, variables.buildVersion)}}
+
+    steps:
+    - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+      displayName: 'Tag Build with version number'
+      inputs:
+        tags: 'Version=$(_version)'
+
+    - task: NodeTool@0
+      displayName: 'Use Node 10.x'
+      inputs:
+        versionSpec: '10.15.1'
+
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        command: 'install'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+
+    - task: Npm@1
+      displayName: 'npm run build'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        customCommand: 'run build'
+
+    - task: Npm@1
+      displayName: 'npm run test'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        customCommand: 'run test'
+
+    - task: Npm@1
+      displayName: 'Replace version number in package.json file'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        customCommand: 'version --allow-same-version $(_version)'
+
+    - task: Npm@1
+      displayName: 'npm pack botframework-wechat'
+      inputs:
+        command: 'custom'
+        workingDir: 'libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat'
+        verbose: false
+        customCommand: 'pack'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat
+        Contents: '**/*.tgz'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        flattenFolders: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+      inputs:
+        ArtifactName: 'drop'
+
+
+
+
