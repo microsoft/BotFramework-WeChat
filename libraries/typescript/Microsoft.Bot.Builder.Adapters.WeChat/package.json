@@ -1,19 +1,21 @@
 {
   "name": "botframework-wechat",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
   "version": "4.0.0",
   "description": "botframework wechat adapter",
-  "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
-  "scripts": {
-    "test": "tsc && nyc mocha tests/",
-    "clean": "erase /q /s .\\lib",
-    "build": "tsc"
-  },
+  "keywords": [
+    "botframework",
+    "bots",
+    "wechat"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/BotFramework-WeChat.git"
   },
-  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microsoft/BotFramework-WeChat/issues"
+  },
   "dependencies": {
     "@azure/ms-rest-js": "1.2.6",
     "adaptivecards": "1.1.0",
