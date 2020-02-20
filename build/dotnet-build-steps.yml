@@ -1,0 +1,48 @@
+steps:
+- powershell: 'gci env:* | sort-object name | Format-Table -AutoSize -Wrap'
+  displayName: 'Display env vars'
+
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 4.9.1'
+  inputs:
+    versionSpec: 4.9.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '$(Parameters.solution)'
+
+- task: VSBuild@1
+  displayName: 'Build solution libraries/csharp_dotnetcore/csharp_dotnetcore.sln'
+  inputs:
+    solution: '$(Parameters.solution)'
+    vsVersion: "latest"
+    msbuildArgs: '-p:SignAssembly=false -p:delaySign=false'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test (release)'
+  inputs:
+    command: test
+    projects: |
+     libraries/csharp_dotnetcore/Tests/**/*Tests.csproj
+     
+    arguments: '-v n  --configuration release --no-build --no-restore --filter TestCategory!=IgnoreInAutomatedBuild --collect:"Code Coverage"'
+  condition: eq(variables['BuildConfiguration'],'Release')
+
+- script: |
+   cd ..
+   dir *.* /s
+  displayName: 'Dir workspace'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: build folder'
+  inputs:
+    PathtoPublish: build
+    ArtifactName: build
+
+- script: |
+   cd ..
+   dir *.* /s
+  displayName: 'Dir workspace'

@@ -1,0 +1,36 @@
+ame: $(Build.BuildId)
+variables:
+  BuildConfiguration: Release
+  BuildPlatform: Any CPU
+  CoverallsToken: define this in Azure
+  Parameters.solution: libraries/csharp_dotnetcore/csharp_dotnetcore.sln
+pool:
+  name: Hosted Windows 2019 with VS2019
+  demands:
+  - msbuild
+  - visualstudio
+
+trigger:
+  branches:
+    include:
+     - master
+  paths:
+    include:
+      - '*'
+    exclude:
+        - doc/*
+        - libraries/typescript/*
+        - samples/*
+        - CODE_OF_CONDUCT.md
+        - CONTRIBUTING.md
+        - LICENSE
+        - README.md
+        - SECURITY.md
+
+pr: none
+
+jobs:
+- job: Build_and_Sign
+  steps:
+  - template: dotnet-build-steps.yml
+  - template: dotnet-sign-steps.yml
