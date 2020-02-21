@@ -1,4 +1,4 @@
-ame: $(Build.BuildId)
+name: $(Build.BuildId)
 variables:
   BuildConfiguration: Release
   BuildPlatform: Any CPU
