@@ -2,11 +2,8 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy packages to Signing'
   inputs:
-    SourceFolder: '$(build.sourcesdirectory)'
-    Contents: |
-     outputpackages\*.nupkg
-     outputpackages\*.snupkg
-     !outputpackages\*.symbols.nupkg
+    SourceFolder: '$(build.sourcesdirectory)\libraries\csharp_dotnetcore\outputpackages'
+    Contents: '*.*'
     TargetFolder: '$(build.artifactstagingdirectory)\Signing'
     flattenFolders: true
 
