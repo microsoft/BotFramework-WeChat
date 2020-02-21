@@ -2,6 +2,12 @@ steps:
 - powershell: 'gci env:* | sort-object name | Format-Table -AutoSize -Wrap'
   displayName: 'Display env vars'
 
+- task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+  displayName: 'Tag build with package version'
+  inputs:
+    tags: 'Version=$(ReleasePackageVersion)'
+  continueOnError: true
+
 - task: NuGetToolInstaller@0
   displayName: 'Use NuGet 4.9.1'
   inputs:
@@ -21,28 +27,9 @@ steps:
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet test (release)'
-  inputs:
-    command: test
-    projects: |
-     libraries/csharp_dotnetcore/Tests/**/*Tests.csproj
-     
-    arguments: '-v n  --configuration release --no-build --no-restore --filter TestCategory!=IgnoreInAutomatedBuild --collect:"Code Coverage"'
-  condition: eq(variables['BuildConfiguration'],'Release')
-
 - script: |
    cd ..
    dir *.* /s
   displayName: 'Dir workspace'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: build folder'
-  inputs:
-    PathtoPublish: build
-    ArtifactName: build
-
-- script: |
-   cd ..
-   dir *.* /s
-  displayName: 'Dir workspace'
+  continueOnError: true
+  condition: succeededOrFailed()
