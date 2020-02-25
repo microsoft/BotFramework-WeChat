@@ -26,7 +26,7 @@
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Any CPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AssemblyOriginatorKeyFile>$(SolutionDir)\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
@@ -38,7 +38,7 @@
     <DefineConstants>SIGNASSEMBLY</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Any CPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -59,15 +59,7 @@
       replace PackageLicenseUrl with PackageLicenseExpression.
     -->
     <NoWarn>$(NoWarn);NU5125</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration) == 'Debug'">
-    <!-- For debug builds, we don't generate documentation. Supress the StyleCop rule that warns about this. -->
-    <NoWarn>$(NoWarn);SA0001</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration) == 'Debug - NuGet Packages'">
-    <!-- For debug Nuget builds, we don't generate documentation. Supress the StyleCop rule that warns about this. -->
-    <NoWarn>$(NoWarn);SA0001</NoWarn>
-
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 </Project>
