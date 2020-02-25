@@ -23,7 +23,7 @@ steps:
   inputs:
     solution: '$(Parameters.solution)'
     vsVersion: "latest"
-    msbuildArgs: '-p:SignAssembly=false -p:delaySign=false'
+    msbuildArgs: '-p:SignAssembly=true -p:delaySign=true'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
 
