@@ -19,6 +19,11 @@ pr:
         - doc/*
         - libraries/csharp_dotnetcore/*
         - samples/*
+        - CODE_OF_CONDUCT.md
+        - CONTRIBUTING.md
+        - LICENSE
+        - README.md
+        - SECURITY.md
 
 jobs:
   - job: WeChat
