@@ -50,6 +50,18 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             _taskQueue = taskQueue;
         }
 
+        public async Task<UserBasicInfoList> GetBatchUsersBasicInformation(List<QueryInfo> userinfo)
+        {
+            var userBasicInfoList = await _wechatClient.GetBatchUsersBasicInformationAsync(userinfo).ConfigureAwait(false);
+            return userBasicInfoList;
+        }
+
+        public async Task<UsersBasicInformation> GetUsersBasicInformation(string openId, string language)
+        {
+            var usersBasicInformation = await _wechatClient.GetUsersBasicInformationAsync(openId, language).ConfigureAwait(false);
+            return usersBasicInformation;
+        }
+
         /// <summary>
         /// Get access token depends on the current settings.
         /// </summary>
