@@ -16,9 +16,9 @@ pr:
     include:
       - '*'
     exclude:
-        - doc/
-        - libraries/csharp_dotnetcore/
-        - samples/
+        - doc/*
+        - libraries/csharp_dotnetcore/*
+        - samples/*
         - CODE_OF_CONDUCT.md
         - CONTRIBUTING.md
         - LICENSE
