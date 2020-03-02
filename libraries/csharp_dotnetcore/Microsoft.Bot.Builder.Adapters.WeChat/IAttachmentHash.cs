@@ -19,7 +19,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <summary>
         /// Calculate the hash of the string content.
         /// </summary>
-        /// <param name="content">The string content need to be hashed.</param>
+        /// <param name="content">The string content needs to be hashed.</param>
         /// <returns>The hash string.</returns>
         string ComputeHash(string content);
     }
