@@ -30,8 +30,6 @@ pr:
     include:
      - master
   paths:
-    include:
-      - '*'
     exclude:
         - doc/
         - libraries/csharp_dotnetcore/
