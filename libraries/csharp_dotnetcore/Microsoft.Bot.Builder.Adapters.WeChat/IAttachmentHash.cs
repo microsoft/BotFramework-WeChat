@@ -12,7 +12,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <summary>
         /// Calculate the hash of the byte array.
         /// </summary>
-        /// <param name="bytes">The byte array need to be hashed.</param>
+        /// <param name="bytes">The byte array needs to be hashed.</param>
         /// <returns>The hash string.</returns>
         string ComputeHash(byte[] bytes);
 
