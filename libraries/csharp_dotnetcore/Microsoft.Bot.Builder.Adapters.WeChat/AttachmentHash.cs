@@ -37,7 +37,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <summary>
         /// Calculates the hash value, used to ignore same file when upload media.
         /// </summary>
-        /// <param name="content">String content need to be hashed.</param>
+        /// <param name="content">String content needs to be hashed.</param>
         /// <returns>Hash value.</returns>
         public string ComputeHash(string content)
         {
