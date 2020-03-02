@@ -20,9 +20,9 @@ trigger:
     include:
       - '*'
     exclude:
-        - doc/*
-        - libraries/typescript/*
-        - samples/*
+        - doc/
+        - libraries/typescript/
+        - samples/
         - CODE_OF_CONDUCT.md
         - CONTRIBUTING.md
         - LICENSE
