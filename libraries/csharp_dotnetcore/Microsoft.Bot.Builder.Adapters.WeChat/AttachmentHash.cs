@@ -12,7 +12,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <summary>
         /// Calculates the hash value, used to ignore same file when upload media.
         /// </summary>
-        /// <param name="inputBytes">Bytes content need to be hashed.</param>
+        /// <param name="inputBytes">Bytes content needs to be hashed.</param>
         /// <returns>Hash value.</returns>
         public string ComputeHash(byte[] inputBytes)
         {
