@@ -52,7 +52,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         {
             if (disposing)
             {
-                // free managed resources
+                // free managed resource
                 if (_signal != null)
                 {
                     _signal.Dispose();
