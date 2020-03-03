@@ -74,6 +74,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             return userBasicInfoList;
         }
 
+        /// <summary>
+        /// Get batch user's basic information form wechat.
+        /// </summary>
+        /// <param name="openId">User's open id from WeChat.</param>
+        /// <param name="language">Optional, user's language setting.</param>
+        /// <returns>List of user's basic information.</returns>
         public async Task<UsersBasicInformation> GetUsersBasicInformationAsync(string openId, string language = "zh_CN")
         {
             _logger.LogInformation("Get users basic information.");
