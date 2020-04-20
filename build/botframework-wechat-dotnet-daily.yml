@@ -5,7 +5,7 @@ variables:
   CoverallsToken: define this in Azure
   Parameters.solution: libraries/csharp_dotnetcore/csharp_dotnetcore.sln
   MSBuildArguments: -p:PublishRepositoryUrl=true -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
-  ReleasePackageVersion: 4.0.0-preview-$(Build.BuildNumber)
+  ReleasePackageVersion: 4.0.0-preview.$(Build.BuildNumber)
 pool:
   name: Hosted Windows 2019 with VS2019
   demands:
