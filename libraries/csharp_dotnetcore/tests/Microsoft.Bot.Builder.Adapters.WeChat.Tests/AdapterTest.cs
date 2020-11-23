@@ -50,13 +50,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
             await testAdapter2.ProcessAsync(request, response, bot, secretInfo).ConfigureAwait(false);
 
             var nullRequest = await Assert.ThrowsAsync<ArgumentNullException>(() => testAdapter.ProcessAsync(null, response, bot, secretInfo)).ConfigureAwait(false);
-            Assert.Equal("Value cannot be null.\r\nParameter name: httpRequest", nullRequest.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'httpRequest')", nullRequest.Message);
             var nullResponse = await Assert.ThrowsAsync<ArgumentNullException>(() => testAdapter.ProcessAsync(request, null, bot, secretInfo)).ConfigureAwait(false);
-            Assert.Equal("Value cannot be null.\r\nParameter name: httpResponse", nullResponse.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'httpResponse')", nullResponse.Message);
             var nullBot = await Assert.ThrowsAsync<ArgumentNullException>(() => testAdapter.ProcessAsync(request, response, null, secretInfo)).ConfigureAwait(false);
-            Assert.Equal("Value cannot be null.\r\nParameter name: bot", nullBot.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'bot')", nullBot.Message);
             var nullSecretInfo = await Assert.ThrowsAsync<ArgumentNullException>(() => testAdapter.ProcessAsync(request, response, bot, null)).ConfigureAwait(false);
-            Assert.Equal("Value cannot be null.\r\nParameter name: secretInfo", nullSecretInfo.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'secretInfo')", nullSecretInfo.Message);
 
             secretInfo.EchoString = "echoString";
             await testAdapter.ProcessAsync(request, response, bot, secretInfo).ConfigureAwait(false);

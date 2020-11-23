@@ -23,7 +23,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Tests
         public void EncodingAESKeyTest()
         {
             var result = Assert.Throws<ArgumentException>(() => new MessageCryptography(MockDataUtility.SecretInfoAesKeyError, MockDataUtility.WeChatSettingsAesKeyError));
-            Assert.Equal("Invalid EncodingAESKey.\r\nParameter name: secretInfo", result.Message);
+            Assert.Equal("Invalid EncodingAESKey. (Parameter 'secretInfo')", result.Message);
         }
 
         [Fact]
