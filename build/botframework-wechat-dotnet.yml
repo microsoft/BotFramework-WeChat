@@ -63,6 +63,13 @@ steps:
   inputs:
     restoreSolution: '$(Parameters.solution)'
 
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: |
+     libraries/csharp_dotnetcore/csharp_dotnetcore.sln
+
 - task: VSBuild@1
   displayName: 'Build solution libraries/csharp_dotnetcore/csharp_dotnetcore.sln'
   inputs:
@@ -71,13 +78,6 @@ steps:
     msbuildArgs: '-p:SignAssembly=false -p:delaySign=false'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet restore'
-  inputs:
-    command: restore
-    projects: |
-     libraries/csharp_dotnetcore/csharp_dotnetcore.sln
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test (release)'
