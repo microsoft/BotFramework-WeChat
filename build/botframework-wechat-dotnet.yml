@@ -73,6 +73,13 @@ steps:
     configuration: '$(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: |
+     libraries/csharp_dotnetcore/csharp_dotnetcore.sln
+
+- task: DotNetCoreCLI@2
   displayName: 'dotnet test (release)'
   inputs:
     command: test
