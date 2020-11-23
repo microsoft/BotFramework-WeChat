@@ -8,15 +8,20 @@ steps:
     tags: 'Version=$(ReleasePackageVersion)'
   continueOnError: true
 
-- task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 4.9.1'
-  inputs:
-    versionSpec: 4.9.1
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet'
 
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
   inputs:
     restoreSolution: '$(Parameters.solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'DotNet restore'
+  inputs:
+    command: restore
+    projects: |
+     libraries/csharp_dotnetcore/csharp_dotnetcore.sln
 
 - task: VSBuild@1
   displayName: 'Build solution libraries/csharp_dotnetcore/csharp_dotnetcore.sln'

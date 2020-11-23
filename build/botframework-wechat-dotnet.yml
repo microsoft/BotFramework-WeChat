@@ -53,10 +53,8 @@ steps:
 - powershell: 'gci env:* | sort-object name | Format-Table -AutoSize -Wrap'
   displayName: 'Display env vars'
 
-- task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 4.9.1'
-  inputs:
-    versionSpec: 4.9.1
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet'
 
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
