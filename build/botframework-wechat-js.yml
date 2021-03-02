@@ -8,7 +8,7 @@ name: $(Build.BuildId)
 pool:
   name: Hosted Windows 2019 with VS2019
 
-pr:
+trigger:
   branches:
     include:
      - master
@@ -16,9 +16,24 @@ pr:
     include:
       - '*'
     exclude:
-        - doc/*
-        - libraries/csharp_dotnetcore/*
-        - samples/*
+        - doc/
+        - libraries/csharp_dotnetcore/
+        - samples/
+        - CODE_OF_CONDUCT.md
+        - CONTRIBUTING.md
+        - LICENSE
+        - README.md
+        - SECURITY.md
+
+pr:
+  branches:
+    include:
+     - master
+  paths:
+    exclude:
+        - doc/
+        - libraries/csharp_dotnetcore/
+        - samples/
         - CODE_OF_CONDUCT.md
         - CONTRIBUTING.md
         - LICENSE

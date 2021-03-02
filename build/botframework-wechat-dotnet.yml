@@ -23,9 +23,9 @@ trigger:
     include:
       - '*'
     exclude:
-        - doc/*
-        - libraries/typescript/*
-        - samples/*
+        - doc/
+        - libraries/typescript/
+        - samples/
         - CODE_OF_CONDUCT.md
         - CONTRIBUTING.md
         - LICENSE
@@ -37,12 +37,10 @@ pr:
     include:
      - master
   paths:
-    include:
-      - '*'
     exclude:
-        - doc/*
-        - libraries/typescript/*
-        - samples/*
+        - doc/
+        - libraries/typescript/
+        - samples/
         - CODE_OF_CONDUCT.md
         - CONTRIBUTING.md
         - LICENSE
