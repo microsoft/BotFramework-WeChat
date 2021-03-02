@@ -60,6 +60,36 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             _semaphore = new SemaphoreSlim(1);
         }
 
+        public async Task<UserBasicInfoList> GetBatchUsersBasicInformationAsync(List<QueryInfo> userinfo)
+        {
+            _logger.LogInformation("Get batch users basic information.");
+            object data = new
+            {
+                user_list = userinfo,
+            };
+            var url = await GetBatchUsersBasicInformationEndPoint().ConfigureAwait(false);
+            var bytes = await SendHttpRequestAsync(HttpMethod.Post, url, data).ConfigureAwait(false);
+            var userBasicInfoList = ConvertBytesToType<UserBasicInfoList>(bytes);
+            CheckWeChatApiResponse(userBasicInfoList);
+            return userBasicInfoList;
+        }
+
+        /// <summary>
+        /// Get batch user's basic information form wechat.
+        /// </summary>
+        /// <param name="openId">User's open id from WeChat.</param>
+        /// <param name="language">Optional, user's language setting.</param>
+        /// <returns>List of user's basic information.</returns>
+        public async Task<UsersBasicInformation> GetUsersBasicInformationAsync(string openId, string language = "zh_CN")
+        {
+            _logger.LogInformation("Get users basic information.");
+            var url = await GetUsersBasicInformationEndPoint(openId, language).ConfigureAwait(false);
+            var bytes = await SendHttpRequestAsync(HttpMethod.Get, url).ConfigureAwait(false);
+            var usersBasicInformation = ConvertBytesToType<UsersBasicInformation>(bytes);
+            CheckWeChatApiResponse(usersBasicInformation);
+            return usersBasicInformation;
+        }
+
         /// <summary>
         /// Get media url from mediaId.
         /// </summary>
@@ -781,6 +811,18 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             }
 
             return $"{ApiHost}/cgi-bin/material/add_news?access_token={accessToken}";
+        }
+
+        private async Task<string> GetBatchUsersBasicInformationEndPoint()
+        {
+            var accessToken = await GetAccessTokenAsync().ConfigureAwait(false);
+            return $"{ApiHost}/cgi-bin/user/info/batchget?access_token={accessToken}";
+        }
+
+        private async Task<string> GetUsersBasicInformationEndPoint(string openId, string language)
+        {
+            var accessToken = await GetAccessTokenAsync().ConfigureAwait(false);
+            return $"{ApiHost}/cgi-bin/user/info?access_token={accessToken}&openid={openId}&lang={language}";
         }
 
         private async Task<string> GetAcquireMediaUrlEndPoint()
