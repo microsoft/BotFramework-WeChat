@@ -3,6 +3,10 @@
  |----|---------------|--------------|-----------------|
 |Master | WeChat Adapter Builds |[![Build Status](https://github.com/microsoft/BotFramework-WeChat/workflows/Adapter%20CI/badge.svg?branch=master)](https://github.com/microsoft/BotFramework-WeChat/actions?query=branch%3Amaster)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/BotFramework-WeChat/badge.svg?branch=master)](https://coveralls.io/github/microsoft/BotFramework-WeChat?branch=master)|
 
+## Packages
+| Name                                  | Daily Build                                                                                                                                                                  |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|
+| Microsoft.Bot.Builder.Adapters.WeChat                                                  | [![BotBuilder Badge](https://buildstats.info/myget/botbuilder/botframework-wechat/Microsoft.Bot.Builder.Adapters.WeChat?includePreReleases=true&dWidth=50)](https://botbuilder.myget.org/feed/botframework-wechat/package/nuget/Microsoft.Bot.Builder.Adapters.WeChat) |
 
 # Contributing
 
