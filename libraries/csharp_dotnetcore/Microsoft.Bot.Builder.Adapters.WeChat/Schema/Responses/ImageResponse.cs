@@ -42,11 +42,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                MsgType = value.Value;
+                MsgType = value.Value!;
             }
         }
 
         [XmlElement(ElementName = "Image")]
-        public Image Image { get; set; }
+        public Image Image { get; set; } = null!;
     }
 }

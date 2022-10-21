@@ -44,7 +44,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                MsgType = value.Value;
+                MsgType = value.Value!;
             }
         }
 
@@ -68,6 +68,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
         /// Article list, can only show up to 10 article.
         /// </value>
         [XmlElement(ElementName = "item")]
-        public List<Article> Articles { get; set; }
+        public List<Article> Articles { get; set; } = null!;
     }
 }

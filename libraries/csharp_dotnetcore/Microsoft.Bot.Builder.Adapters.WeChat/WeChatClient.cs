@@ -35,10 +35,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
     /// <summary>
     /// A WeChat client is used to communicate with WeChat API.
     /// </summary>
-    internal class WeChatClient : IDisposable
+    public class WeChatClient : IDisposable
     {
         private const string ApiHost = "https://api.weixin.qq.com";
-        private static readonly HttpClient HttpClient = new HttpClient();
+
+        private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly WeChatSettings _settings;
         private readonly ILogger _logger;
@@ -50,7 +51,8 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         public WeChatClient(
             WeChatSettings settings,
             IStorage storage,
-            ILogger logger = null)
+            ILogger logger,
+            IHttpClientFactory httpClientFactory)
         {
             _settings = settings;
             _attachmentStorage = new WeChatAttachmentStorage(storage);
@@ -58,6 +60,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             _logger = logger ?? NullLogger.Instance;
             _attachmentHash = new AttachmentHash();
             _semaphore = new SemaphoreSlim(1);
+            _httpClientFactory = httpClientFactory;
         }
 
         /// <summary>
@@ -99,7 +102,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="token">Request auth token.</param>
         /// <param name="timeout">Send http request timeout.</param>
         /// <returns>Response content as byte array.</returns>
-        public virtual async Task<byte[]> SendHttpRequestAsync(HttpMethod method, string url, object data = null, string token = null, int timeout = 10000)
+        public virtual async Task<byte[]> SendHttpRequestAsync(HttpMethod method, string url, object? data = null, string? token = null, int timeout = 10000)
         {
             _logger.LogInformation($"Send {method.Method} request to {url}");
             using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeout)))
@@ -380,7 +383,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <returns>Standard result of calling WeChat message API.</returns>
         public async Task<WeChatJsonResult> SendNewsAsync(string openId, List<Article> articles, int timeout = 10000, string customerServiceAccount = "")
         {
-            object data = null;
+            object? data = null;
             if (string.IsNullOrWhiteSpace(customerServiceAccount))
             {
                 data = new
@@ -637,7 +640,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="data">Request data.</param>
         /// <param name="cancellationToken">Cancellation token to cancell the request.</param>
         /// <returns>Http response content as byte array.</returns>
-        private static async Task<byte[]> MakeHttpRequestAsync(string token, HttpMethod method, string url, object data = null, CancellationToken cancellationToken = default(CancellationToken))
+        private async Task<byte[]> MakeHttpRequestAsync(string? token, HttpMethod method, string url, object? data = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
@@ -654,7 +657,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     }
 
-                    using (var response = await HttpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false))
+                    using (var response = await _httpClientFactory.CreateClient().SendAsync(requestMessage, cancellationToken).ConfigureAwait(false))
                     {
                         if (!response.IsSuccessStatusCode)
                         {
@@ -671,7 +674,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             }
         }
 
-        private static string GetAccessTokenEndPoint(string appId, string appSecret)
+        private string GetAccessTokenEndPoint(string appId, string appSecret)
         {
             return $"{ApiHost}/cgi-bin/token?grant_type=client_credential&appid={appId}&secret={appSecret}";
         }
@@ -682,7 +685,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="name">The name of the attachment media.</param>
         /// <param name="type">The media's fallback type.</param>
         /// <returns>Media file extension.</returns>
-        private static string GetMediaExtension(string name, string type)
+        private string GetMediaExtension(string name, string type)
         {
             var ext = MimeTypesMap.GetExtension(type);
             if (string.IsNullOrEmpty(ext))
@@ -798,7 +801,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         private T ConvertBytesToType<T>(byte[] byteArray)
         {
             var result = Encoding.UTF8.GetString(byteArray);
+#pragma warning disable CS8603 // Possible null reference return.
             return JsonConvert.DeserializeObject<T>(result);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         /// <summary>
@@ -845,7 +850,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                     mutipartDataContent.Add(contentByte);
 
                     // Additional form is required when upload a forever video.
-                    StringContent stringContent = null;
+                    StringContent? stringContent = null;
                     if (isTemporaryMedia == false && attachmentData.Type.Contains(MediaTypes.Video))
                     {
                         var additionalForm = string.Format(CultureInfo.InvariantCulture, "{{\"title\":\"{0}\", \"introduction\":\"introduction\"}}", attachmentData.Name);

@@ -22,7 +22,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// <returns>WeChat request message.</returns>
         public static IRequestMessageBase GetRequestEntity(XDocument doc, ILogger logger)
         {
-            IRequestMessageBase requestMessage = null;
+            IRequestMessageBase? requestMessage = null;
 
             try
             {
@@ -51,6 +51,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
                         requestMessage = EntityHelper.FillEntityWithXml<ShortVideoRequest>(doc);
                         break;
                     case RequestMessageTypes.Event:
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                         switch (doc.Root.Element("Event").Value)
                         {
                             case EventTypes.Enter:
@@ -102,6 +103,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
                                 requestMessage = EntityHelper.FillEntityWithXml<ViewMiniProgramEvent>(doc);
                                 break;
                         }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                         break;
 
@@ -121,7 +123,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
                 throw;
             }
 
-            return requestMessage;
+            return requestMessage!;
         }
 
         public static string ConvertResponseToXml(object entity)
@@ -158,7 +160,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
                 responseXmlString = entity.ToString();
             }
 
-            return responseXmlString;
+            return responseXmlString!;
         }
 
         /// <summary>
@@ -174,7 +176,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
                 return RequestMessageTypes.Unknown;
             }
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             return requestMessageDocument.Root.Element("MsgType").Value;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
     }
 }

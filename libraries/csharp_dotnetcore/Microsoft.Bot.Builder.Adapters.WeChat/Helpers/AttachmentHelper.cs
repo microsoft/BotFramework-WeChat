@@ -22,7 +22,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Helpers
                 && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
 
-        public static byte[] DecodeBase64String(string base64Encoded, out string contentType)
+        public static byte[] DecodeBase64String(string base64Encoded, out string? contentType)
         {
             contentType = null;
 
@@ -38,7 +38,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Helpers
             }
 
             // string off header
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var headerIndex = base64Encoded.IndexOf("base64,", StringComparison.InvariantCulture);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             if (headerIndex >= 0)
             {
                 base64Encoded = base64Encoded.Substring(headerIndex + 7).Trim();

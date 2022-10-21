@@ -15,7 +15,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// HeaderContent of the menu.
         /// </value>
         [JsonProperty("head_content")]
-        public string HeaderContent { get; set; }
+        public string? HeaderContent { get; set; }
 
         /// <summary>
         /// Gets or sets MenuItems.
@@ -24,7 +24,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Items in message menu.
         /// </value>
         [JsonProperty("list")]
-        public List<MenuItem> MenuItems { get; set; }
+        public List<MenuItem>? MenuItems { get; set; }
 
         /// <summary>
         /// Gets or sets TailContent.
@@ -33,6 +33,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Footer of the menu.
         /// </value>
         [JsonProperty("tail_content")]
-        public string TailContent { get; set; }
+        public string? TailContent { get; set; }
     }
 }

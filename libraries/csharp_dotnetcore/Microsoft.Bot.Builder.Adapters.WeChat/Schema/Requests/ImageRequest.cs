@@ -17,7 +17,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         /// Media id of the image.
         /// </value>
         [XmlElement(ElementName = "MediaId")]
-        public string MediaId { get; set; }
+        public string MediaId { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets PicUrl.
@@ -26,6 +26,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         /// Image's link.
         /// </value>
         [XmlElement(ElementName = "PicUrl")]
-        public string PicUrl { get; set; }
+        public string PicUrl { get; set; } = null!;
     }
 }

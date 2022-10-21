@@ -40,11 +40,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         public WeChatHttpAdapter(
                     WeChatSettings settings,
                     IStorage storage,
-                    IBackgroundTaskQueue taskQueue = null,
-                    ILogger logger = null)
+                    IBackgroundTaskQueue taskQueue,
+                    ILogger logger,
+                    WeChatClient chatClient)
         {
             _settings = settings;
-            _wechatClient = new WeChatClient(settings, storage, logger);
+            _wechatClient = chatClient;
             _wechatMessageMapper = new WeChatMessageMapper(_wechatClient, settings.UploadTemporaryMedia, logger);
             _logger = logger ?? NullLogger.Instance;
             _taskQueue = taskQueue;
@@ -203,7 +204,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="cancellationToken">A cancellation token that can be used by other objects
         /// or threads to receive notice of cancellation.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
-        public async Task ProcessAsync(HttpRequest httpRequest, HttpResponse httpResponse, IBot bot, SecretInfo secretInfo, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task ProcessAsync(
+            HttpRequest httpRequest,
+            HttpResponse httpResponse,
+            IBot bot,
+            SecretInfo secretInfo,
+            CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Receive a new request from WeChat.");
             if (httpRequest == null)
@@ -296,11 +302,16 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="callback"> Bot callback handler.</param>
         /// <param name="cancellationToken">Cancellation Token of this Task.</param>
         /// <returns>Response message entity.</returns>
-        private async Task<object> ProcessWeChatRequest(IRequestMessageBase wechatRequest, BotCallbackHandler callback, CancellationToken cancellationToken)
+        private async Task<object> ProcessWeChatRequest(
+            IRequestMessageBase wechatRequest,
+            BotCallbackHandler callback,
+            CancellationToken cancellationToken)
         {
             var activity = await _wechatMessageMapper.ToConnectorMessage(wechatRequest).ConfigureAwait(false);
             BotAssert.ActivityNotNull(activity);
+#pragma warning disable CS8603 // Possible null reference return.
             return await ProcessActivityAsync(activity, callback, cancellationToken).ConfigureAwait(false);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         /// <summary>
@@ -324,9 +335,10 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 var postDataStr = postDataDocument.ToString();
                 var decryptDoc = postDataDocument;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 if (secretInfo != null
                     && !string.IsNullOrWhiteSpace(_settings.Token)
-                    && postDataDocument.Root.Element("Encrypt") != null
+                    && postDataDocument.Root!.Element("Encrypt") != null
                     && !string.IsNullOrEmpty(postDataDocument.Root.Element("Encrypt").Value))
                 {
                     var msgCrype = new MessageCryptography(secretInfo, _settings);
@@ -334,6 +346,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
 
                     decryptDoc = XDocument.Parse(msgXml);
                 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                 var requestMessage = WeChatMessageFactory.GetRequestEntity(decryptDoc, _logger);
 
@@ -349,53 +362,51 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="cancellationToken">A cancellation token that can be used by other objects
         /// or threads to receive notice of cancellation.</param>
         /// <returns>WeChat response or ChannelData bot provided.</returns>
-        private async Task<object> ProcessActivityAsync(Activity activity, BotCallbackHandler callback, CancellationToken cancellationToken = default(CancellationToken))
+        private async Task<object?> ProcessActivityAsync(Activity activity, BotCallbackHandler callback, CancellationToken cancellationToken = default(CancellationToken))
         {
-            using (var context = new TurnContext(this, activity))
+            using var context = new TurnContext(this, activity);
+            try
             {
+                var responses = new List<Activity>();
+                context.TurnState.Add(TurnResponseKey, responses);
+                await RunPipelineAsync(context, callback, cancellationToken).ConfigureAwait(false);
                 try
                 {
-                    var responses = new List<Activity>();
-                    context.TurnState.Add(TurnResponseKey, responses);
-                    await RunPipelineAsync(context, callback, cancellationToken).ConfigureAwait(false);
-                    try
+                    var activities = responses;
+                    if (_settings.PassiveResponseMode)
                     {
-                        var activities = responses;
-                        if (_settings.PassiveResponseMode)
-                        {
-                            return await ProcessBotResponse(activities, activity.From.Id).ConfigureAwait(false);
-                        }
-
-                        // Running a background task, Get bot response and parse it from activity to WeChat response message
-                        if (_taskQueue == null)
-                        {
-                            throw new NullReferenceException("Background task queue can not be null.");
-                        }
-
-                        _taskQueue.QueueBackgroundWorkItem(async (ct) =>
-                        {
-                            await ProcessBotResponse(activities, activity.From.Id).ConfigureAwait(false);
-                        });
-                        return null;
+                        return await ProcessBotResponse(activities, activity.From.Id).ConfigureAwait(false);
                     }
-                    catch (Exception e)
+
+                    // Running a background task, Get bot response and parse it from activity to WeChat response message
+                    if (_taskQueue == null)
                     {
-                        // TODO: exception handling when send message to wechat api failed.
-                        _logger.LogError(e, "Failed to process bot response.");
-                        throw;
+                        throw new NullReferenceException("Background task queue can not be null.");
                     }
+
+                    _taskQueue.QueueBackgroundWorkItem(async (ct) =>
+                    {
+                        await ProcessBotResponse(activities, activity.From.Id).ConfigureAwait(false);
+                    });
+                    return null;
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    if (OnTurnError != null)
-                    {
-                        // exception handing when bot throw an exception.
-                        await OnTurnError(context, ex).ConfigureAwait(false);
-                        return null;
-                    }
-
+                    // TODO: exception handling when send message to wechat api failed.
+                    _logger.LogError(e, "Failed to process bot response.");
                     throw;
                 }
+            }
+            catch (Exception ex)
+            {
+                if (OnTurnError != null)
+                {
+                    // exception handing when bot throw an exception.
+                    await OnTurnError(context, ex).ConfigureAwait(false);
+                    return null;
+                }
+
+                throw;
             }
         }
 
@@ -405,9 +416,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="activities">List of bot activities.</param>
         /// <param name="openId">User's open id from WeChat.</param>
         /// <returns>Bot response message.</returns>
-        private async Task<object> ProcessBotResponse(List<Activity> activities, string openId)
+        private async Task<object?> ProcessBotResponse(List<Activity> activities, string openId)
         {
-            object response = null;
+            object? response = null;
             foreach (var activity in activities)
             {
                 if (activity != null && activity.Type == ActivityTypes.Message)
@@ -477,38 +488,38 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                     {
                         case ResponseMessageTypes.Text:
                             var textResponse = response as TextResponse;
-                            await _wechatClient.SendTextAsync(openId, textResponse.Content).ConfigureAwait(false);
+                            await _wechatClient.SendTextAsync(openId, textResponse!.Content).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.Image:
                             var imageResposne = response as ImageResponse;
-                            await _wechatClient.SendImageAsync(openId, imageResposne.Image.MediaId).ConfigureAwait(false);
+                            await _wechatClient.SendImageAsync(openId, imageResposne!.Image.MediaId!).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.News:
                             var newsResponse = response as NewsResponse;
-                            await _wechatClient.SendNewsAsync(openId, newsResponse.Articles).ConfigureAwait(false);
+                            await _wechatClient.SendNewsAsync(openId, newsResponse!.Articles).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.Music:
                             var musicResponse = response as MusicResponse;
-                            var music = musicResponse.Music;
-                            await _wechatClient.SendMusicAsync(openId, music.Title, music.Description, music.MusicUrl, music.HQMusicUrl, music.ThumbMediaId).ConfigureAwait(false);
+                            var music = musicResponse!.Music;
+                            await _wechatClient.SendMusicAsync(openId, music.Title!, music.Description!, music.MusicUrl!, music.HQMusicUrl!, music.ThumbMediaId!).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.MPNews:
                             var mpnewsResponse = response as MPNewsResponse;
-                            await _wechatClient.SendMPNewsAsync(openId, mpnewsResponse.MediaId).ConfigureAwait(false);
+                            await _wechatClient.SendMPNewsAsync(openId, mpnewsResponse!.MediaId).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.Video:
                             var videoResposne = response as VideoResponse;
-                            var video = videoResposne.Video;
-                            await _wechatClient.SendVideoAsync(openId, video.MediaId, video.Title, video.Description).ConfigureAwait(false);
+                            var video = videoResposne!.Video;
+                            await _wechatClient.SendVideoAsync(openId, video.MediaId!, video.Title!, video.Description!).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.Voice:
                             var voiceResponse = response as VoiceResponse;
-                            var voice = voiceResponse.Voice;
-                            await _wechatClient.SendVoiceAsync(openId, voice.MediaId).ConfigureAwait(false);
+                            var voice = voiceResponse!.Voice;
+                            await _wechatClient.SendVoiceAsync(openId, voice.MediaId!).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.MessageMenu:
                             var menuResponse = response as MessageMenuResponse;
-                            await _wechatClient.SendMessageMenuAsync(openId, menuResponse.MessageMenu).ConfigureAwait(false);
+                            await _wechatClient.SendMessageMenuAsync(openId, menuResponse!.MessageMenu).ConfigureAwait(false);
                             break;
                         case ResponseMessageTypes.LocationMessage:
                         case ResponseMessageTypes.SuccessResponse:

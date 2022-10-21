@@ -42,12 +42,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                MsgType = value.Value;
+                MsgType = value.Value!;
             }
         }
 
         [XmlIgnore]
-        public string Content { get; set; }
+        public string Content { get; set; } = null!;
 
         [XmlElement(ElementName = "Content")]
         public XmlCDataSection ContentCData
@@ -59,7 +59,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                Content = value.Value;
+                Content = value.Value!;
             }
         }
     }

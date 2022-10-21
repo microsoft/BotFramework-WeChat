@@ -23,7 +23,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
         {
         }
 
-        public MessageMenu MessageMenu { get; set; }
+        public MessageMenu MessageMenu { get; set; } = null!;
 
         public override string MsgType => ResponseMessageTypes.MessageMenu;
     }

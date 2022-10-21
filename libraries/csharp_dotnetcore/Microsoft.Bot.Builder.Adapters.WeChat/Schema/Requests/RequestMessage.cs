@@ -22,7 +22,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         public long MsgId { get; set; }
 
         [XmlElement(ElementName = "Encrypt")]
-        public string Encrypt { get; set; }
+        public string Encrypt { get; set; } = null!;
 
         /// <summary>
         /// Gets MsgType.
@@ -40,7 +40,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         /// Recipient openId.
         /// </value>
         [XmlElement(ElementName = "ToUserName")]
-        public string ToUserName { get; set; }
+        public string ToUserName { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets FromUserName.
@@ -49,7 +49,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         /// Sender openId.
         /// </value>
         [XmlElement(ElementName = "FromUserName")]
-        public string FromUserName { get; set; }
+        public string FromUserName { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets CreateTime.

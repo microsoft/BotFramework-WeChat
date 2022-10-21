@@ -11,12 +11,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         public override string MsgType => RequestMessageTypes.Voice;
 
         [XmlElement(ElementName = "MediaId")]
-        public string MediaId { get; set; }
+        public string MediaId { get; set; } = null!;
 
         [XmlElement(ElementName = "Format")]
-        public string Format { get; set; }
+        public string Format { get; set; } = null!;
 
         [XmlElement(ElementName = "Recognition")]
-        public string Recognition { get; set; }
+        public string Recognition { get; set; } = null!;
     }
 }

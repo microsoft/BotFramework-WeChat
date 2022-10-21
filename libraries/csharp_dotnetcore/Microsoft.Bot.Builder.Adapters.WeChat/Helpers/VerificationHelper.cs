@@ -19,7 +19,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Helpers
         /// <param name="token">Validation token from WeChat.</param>
         /// <param name="postBody">Request body as string.</param>
         /// <returns>Signature verification result.</returns>
-        public static bool VerifySignature(string signature, string timestamp, string nonce, string token = null, string postBody = null)
+        public static bool VerifySignature(string signature, string timestamp, string nonce, string token, string? postBody = null)
         {
             // token can be null when user did not set its value.
             if (string.IsNullOrEmpty(signature))
@@ -48,7 +48,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Helpers
         /// <param name="nonce">WeChat message nonce in query params.</param>
         /// <param name="encryptedMessage">The encrypted message content from WeChat request.</param>
         /// <returns>Generated signature.</returns>
-        private static string GenerateSignature(string token, string timestamp, string nonce, string encryptedMessage = null)
+        private static string GenerateSignature(string token, string timestamp, string nonce, string? encryptedMessage = null)
         {
             var arr = string.IsNullOrEmpty(encryptedMessage) ? new[] { token, timestamp, nonce } : new[] { token, timestamp, nonce, encryptedMessage };
             Array.Sort(arr, Compare);

@@ -8,6 +8,8 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
     /// </summary>
     public class WeChatSettings
     {
+        public const string ConfigureItemName = "WeChatSettings";
+
         /// <summary>
         /// Gets or sets a value indicating whether upload media as temporary media.
         /// </summary>
@@ -30,7 +32,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <value>
         /// Token from the request parameter.
         /// </value>
-        public string Token { get; set; }
+        public string Token { get; set; } = null!;
 
         /// <summary>
         /// Gets or Sets endcoding aes key.
@@ -40,7 +42,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// EncodingAESKey fixed length of 43 characters, a-z, A-Z, 0-9 a total of 62 characters selected
         /// https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318479&token=&lang=en_US.
         /// </value>
-        public string EncodingAesKey { get; set; }
+        public string EncodingAesKey { get; set; } = null!;
 
         /// <summary>
         /// Gets or Sets WeChat app id.
@@ -48,7 +50,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <value>
         /// WeChat app id.
         /// </value>
-        public string AppId { get; set; }
+        public string AppId { get; set; } = null!;
 
         /// <summary>
         /// Gets or Sets AppSecret.
@@ -56,6 +58,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <value>
         /// WeChat app secret.
         /// </value>
-        public string AppSecret { get; set; }
+        public string AppSecret { get; set; } = null!;
     }
 }

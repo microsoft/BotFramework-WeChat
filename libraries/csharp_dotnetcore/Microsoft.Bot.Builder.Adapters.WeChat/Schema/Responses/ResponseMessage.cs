@@ -39,7 +39,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
         /// Recipient openId.
         /// </value>
         [XmlIgnore]
-        public string ToUserName { get; set; }
+        public string ToUserName { get; set; } = null!;
 
         [XmlElement(ElementName = "ToUserName")]
         public XmlCDataSection ToUserNameCData
@@ -51,7 +51,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                ToUserName = value.Value;
+                ToUserName = value.Value!;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
         /// Sender openId.
         /// </value>
         [XmlIgnore]
-        public string FromUserName { get; set; }
+        public string FromUserName { get; set; } = null!;
 
         [XmlElement(ElementName = "FromUserName")]
         public XmlCDataSection FromUserNameCData
@@ -74,7 +74,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                FromUserName = value.Value;
+                FromUserName = value.Value!;
             }
         }
 
@@ -94,6 +94,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
         /// Response message type.
         /// </value>
         [XmlIgnore]
-        public virtual string MsgType { get; set; }
+        public virtual string MsgType { get; set; } = null!;
     }
 }

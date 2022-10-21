@@ -11,9 +11,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         public override string MsgType => RequestMessageTypes.ShortVideo;
 
         [XmlElement(ElementName = "MediaId")]
-        public string MediaId { get; set; }
+        public string MediaId { get; set; } = null!;
 
         [XmlElement(ElementName = "ThumbMediaId")]
-        public string ThumbMediaId { get; set; }
+        public string ThumbMediaId { get; set; } = null!;
     }
 }

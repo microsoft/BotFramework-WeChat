@@ -14,7 +14,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
     {
         private readonly ILogger _logger;
 
-        public QueuedHostedService(IBackgroundTaskQueue backgroundTaskQueue, ILogger logger = null)
+        public QueuedHostedService(IBackgroundTaskQueue backgroundTaskQueue, ILogger logger)
         {
             TaskQueue = backgroundTaskQueue;
             _logger = logger ?? NullLogger.Instance;

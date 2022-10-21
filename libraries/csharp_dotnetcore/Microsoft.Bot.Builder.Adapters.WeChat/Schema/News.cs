@@ -17,7 +17,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Thumbnail image id.
         /// </value>
         [JsonProperty("thumb_media_id")]
-        public string ThumbMediaId { get; set; }
+        public string ThumbMediaId { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets Author.
@@ -26,7 +26,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Author of the news.
         /// </value>
         [JsonProperty("author")]
-        public string Author { get; set; }
+        public string Author { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets Title.
@@ -35,7 +35,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// News title.
         /// </value>
         [JsonProperty("title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets ContentSourceUrl.
@@ -44,7 +44,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Link to open when user click open original article.
         /// </value>
         [JsonProperty("content_source_url")]
-        public string ContentSourceUrl { get; set; }
+        public string ContentSourceUrl { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets Content.
@@ -53,7 +53,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// News content, support HTML.
         /// </value>
         [JsonProperty("content")]
-        public string Content { get; set; }
+        public string Content { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets Description.
@@ -62,7 +62,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// News description.
         /// </value>
         [JsonProperty("digest")]
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets ShowCoverPicture.
@@ -72,7 +72,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Must be a string.
         /// </value>
         [JsonProperty("show_cover_pic")]
-        public string ShowCoverPicture { get; set; }
+        public string ShowCoverPicture { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets ThumbUrl.
@@ -81,7 +81,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Thumbnail image url.
         /// </value>
         [JsonProperty("thumb_url")]
-        public string ThumbUrl { get; set; }
+        public string ThumbUrl { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets NeedOpenComment.

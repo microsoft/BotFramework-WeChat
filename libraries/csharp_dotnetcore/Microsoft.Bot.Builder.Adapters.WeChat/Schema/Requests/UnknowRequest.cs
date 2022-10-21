@@ -18,6 +18,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         /// Original request body of the unknow type, should be xml format.
         /// </value>
         [XmlElement(ElementName = "Content")]
-        public XDocument Content { get; set; }
+        public XDocument Content { get; set; } = null!;
     }
 }

@@ -42,11 +42,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                MsgType = value.Value;
+                MsgType = value.Value!;
             }
         }
 
         [XmlElement(ElementName = "Video")]
-        public Video Video { get; set; }
+        public Video Video { get; set; } = null!;
     }
 }

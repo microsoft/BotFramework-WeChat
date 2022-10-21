@@ -42,11 +42,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                MsgType = value.Value;
+                MsgType = value.Value!;
             }
         }
 
         [XmlElement(ElementName = "Music")]
-        public Music Music { get; set; }
+        public Music Music { get; set; } = null!;
     }
 }

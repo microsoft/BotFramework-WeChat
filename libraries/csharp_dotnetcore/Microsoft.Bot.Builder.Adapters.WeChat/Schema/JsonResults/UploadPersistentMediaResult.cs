@@ -8,6 +8,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.JsonResults
     public class UploadPersistentMediaResult : UploadMediaResult
     {
         [JsonProperty("url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = null!;
     }
 }

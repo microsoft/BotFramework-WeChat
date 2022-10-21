@@ -12,7 +12,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
     internal class AccessTokenStorage : IWeChatStorage<WeChatAccessToken>, IDisposable
     {
         private readonly IStorage _storage;
-        private SemaphoreSlim _semaphore;
+        private SemaphoreSlim? _semaphore;
 
         public AccessTokenStorage(IStorage storage)
         {
@@ -24,7 +24,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
         {
             try
             {
-                await _semaphore.WaitAsync().ConfigureAwait(false);
+                await _semaphore!.WaitAsync().ConfigureAwait(false);
                 var dict = new Dictionary<string, object>
                 {
                     { key, value },
@@ -33,7 +33,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
             }
             finally
             {
-                _semaphore.Release();
+                _semaphore!.Release();
             }
         }
 
@@ -41,21 +41,21 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
         {
             try
             {
-                await _semaphore.WaitAsync().ConfigureAwait(false);
+                await _semaphore!.WaitAsync().ConfigureAwait(false);
                 var keys = new string[] { key };
                 var result = await _storage.ReadAsync<WeChatAccessToken>(keys, cancellationToken).ConfigureAwait(false);
                 result.TryGetValue(key, out var wechatResult);
 
-                if (IfTokenExpired(wechatResult))
+                if (IfTokenExpired(wechatResult!))
                 {
-                    return null;
+                    return null!;
                 }
 
-                return wechatResult;
+                return wechatResult!;
             }
             finally
             {
-                _semaphore.Release();
+                _semaphore!.Release();
             }
         }
 
@@ -63,13 +63,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
         {
             try
             {
-                await _semaphore.WaitAsync().ConfigureAwait(false);
+                await _semaphore!.WaitAsync().ConfigureAwait(false);
                 var keys = new string[] { key };
                 await _storage.DeleteAsync(keys, cancellationToken).ConfigureAwait(false);
             }
             finally
             {
-                _semaphore.Release();
+                _semaphore!.Release();
             }
         }
 

@@ -65,7 +65,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="uploadTemporaryMedia">The IConfiguration instance need to used by mapper.</param>
         /// <param name="wechatClient">The WeChat client need to be used when need to call WeChat api, like upload media, etc.</param>
         /// <param name="logger">The ILogger implementation this adapter should use.</param>
-        public WeChatMessageMapper(WeChatClient wechatClient, bool uploadTemporaryMedia, ILogger logger = null)
+        public WeChatMessageMapper(WeChatClient wechatClient, bool uploadTemporaryMedia, ILogger logger)
         {
             _wechatClient = wechatClient;
             _uploadTemporaryMedia = uploadTemporaryMedia;
@@ -214,7 +214,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                         else
                         {
                             // Log unsupported attachment.
-                            _logger.LogInformation($"Unsupported attachment type: {attachment.ContentType}");
+                            _logger.LogInformation($"Unsupported attachment type: {attachment!.ContentType}");
                         }
 
                         responseMessageList.AddRange(attachmentResponses);
@@ -251,7 +251,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
 
             if (type.Contains(MediaTypes.Video))
             {
-                return new VideoResponse(activity.From.Id, activity.Recipient.Id, new Video(mediaId));
+                var video = new Video();
+                video.MediaId = mediaId;
+                return new VideoResponse(activity.From.Id, activity.Recipient.Id, video);
             }
 
             if (type.Contains(MediaTypes.Audio))
@@ -372,17 +374,19 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             {
                 // Convert action to a tag if its a url other wise convert it to message menu.
                 var actionContent = action.DisplayText ?? action.Title ?? action.Text;
-                if (AttachmentHelper.IsUrl(action.Value))
+                if (AttachmentHelper.IsUrl(action.Value!))
                 {
                     text = AddLine(text, $"<a href=\"{action.Value}\">{actionContent}</a>");
                 }
                 else
                 {
+#pragma warning disable CS8601 // Possible null reference assignment.
                     var menuItem = new MenuItem
                     {
                         Id = action.Value == null ? actionContent : action.Value.ToString(),
                         Content = actionContent,
                     };
+#pragma warning restore CS8601 // Possible null reference assignment.
                     menuItems.Add(menuItem);
                 }
             }
@@ -430,8 +434,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             {
                 Title = thumbnailCard.Title,
                 Description = body,
+#pragma warning disable CS8601 // Possible null reference assignment.
                 Url = thumbnailCard.Tap?.Value.ToString(),
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning disable CS8602 // Possible null reference assignment.
                 PicUrl = thumbnailCard.Images.FirstOrDefault().Url,
+#pragma warning restore CS8602 // Possible null reference assignment.
             };
             var newsResponse = new NewsResponse(activity.From.Id, activity.Recipient.Id, new List<Article>() { article });
             messages.Add(newsResponse);
@@ -538,11 +546,15 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
 
             if (AttachmentHelper.IsUrl(attachment.Content))
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 responseList.Add(await MediaContentToWeChatResponse(activity, attachment.Name, attachment.Content.ToString(), attachment.ContentType).ConfigureAwait(false));
+#pragma warning restore CS8604 // Possible null reference argument.
             }
             else if (attachment.Content != null)
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 responseList.AddRange(GetFixedMessages(activity, attachment.Content.ToString()));
+#pragma warning restore CS8604 // Possible null reference argument.
             }
 
             return responseList;
@@ -561,6 +573,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 throw new ArgumentException("Image is required for news.", nameof(heroCard));
             }
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var news = new News
             {
                 Author = activity.From.Name,
@@ -573,12 +586,17 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 // Let user use openurl action as tap action instead.
                 ContentSourceUrl = heroCard.Tap?.Value.ToString() ?? heroCard.Images.FirstOrDefault().Url,
             };
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             foreach (var image in heroCard.Images)
             {
                 // MP news image is required and can not be a temporary media.
                 var mediaMessage = await MediaContentToWeChatResponse(activity, image.Alt, image.Url, MediaTypes.Image).ConfigureAwait(false);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8601 // Possible null reference assignment.
                 news.ThumbMediaId = (mediaMessage as ImageResponse).Image.MediaId;
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 news.ThumbUrl = image.Url;
             }
 
@@ -609,7 +627,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 var renderer = new AdaptiveCardRenderer();
                 var schemaVersion = renderer.SupportedSchemaVersion;
                 var converImageUrl = adaptiveCard.AdditionalProperties[CoverImageUrlKey].ToString();
-                var attachmentData = await CreateAttachmentDataAsync(title ?? activity.Text, converImageUrl, MediaTypes.Image).ConfigureAwait(false);
+                var attachmentData = await CreateAttachmentDataAsync(title ?? activity.Text, converImageUrl!, MediaTypes.Image).ConfigureAwait(false);
                 var thumbMediaId = (await _wechatClient.UploadMediaAsync(attachmentData, false).ConfigureAwait(false)).MediaId;
 
                 // Replace all image URL to WeChat acceptable URL
@@ -631,11 +649,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                     Author = activity.From.Name,
                     Description = adaptiveCard.Speak ?? adaptiveCard.FallbackText,
                     Content = html.ToString(),
-                    Title = title,
+                    Title = title!,
 
                     // Set not should cover, because adaptive card don't have a cover.
                     ShowCoverPicture = "0",
+#pragma warning disable CS8601
                     ContentSourceUrl = adaptiveCard.AdditionalProperties[ContentSourceUrlKey].ToString(),
+#pragma warning restore CS8601
                     ThumbMediaId = thumbMediaId,
                 };
 
@@ -659,7 +679,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             {
                 var attachmentData = await CreateAttachmentDataAsync(adaptiveImage.AltText ?? adaptiveImage.Id, adaptiveImage.Url.AbsoluteUri, adaptiveImage.Type).ConfigureAwait(false);
                 var uploadResult = await _wechatClient.UploadNewsImageAsync(attachmentData).ConfigureAwait(false) as UploadPersistentMediaResult;
-                adaptiveImage.Url = new Uri(uploadResult.Url);
+                adaptiveImage.Url = new Uri(uploadResult!.Url);
                 return;
             }
 
@@ -783,7 +803,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
 
             var body = videoCard.Subtitle;
             body = AddLine(body, videoCard.Text);
-            Video video = null;
+            Video? video = null;
 
             // upload thumbnail image.
             if (!string.IsNullOrEmpty(videoCard.Image?.Url))
@@ -792,11 +812,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 var reponseList = await MediaContentToWeChatResponse(activity, videoCard.Title, videoCard.Media[0].Url, MediaTypes.Video).ConfigureAwait(false);
                 if (reponseList is VideoResponse videoResponse)
                 {
-                    video = new Video(videoResponse.Video.MediaId, videoCard.Title, body);
+                    video = new Video(videoResponse.Video.MediaId!, videoCard.Title, body);
                 }
             }
 
-            messages.Add(new VideoResponse(activity.From.Id, activity.Recipient.Id, video));
+            messages.Add(new VideoResponse(activity.From.Id, activity.Recipient.Id, video!));
             messages.AddRange(ProcessCardActions(activity, videoCard.Buttons));
 
             return messages;
@@ -885,14 +905,18 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             }
             else
             {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 bytesData = AttachmentHelper.DecodeBase64String(content, out contentType);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             }
 
             name = name ?? Guid.NewGuid().ToString();
 
             // should be lower by WeChat.
 #pragma warning disable CA1308
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             contentType = contentType.ToLowerInvariant();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CA1308
             return new AttachmentData(contentType, name, bytesData, bytesData);
         }

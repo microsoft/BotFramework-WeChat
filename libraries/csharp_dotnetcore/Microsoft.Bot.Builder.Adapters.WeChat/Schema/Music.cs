@@ -17,7 +17,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Title of music.
         /// </value>
         [XmlIgnore]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [XmlElement(ElementName = "Title")]
         public XmlCDataSection TitleCData
@@ -40,7 +40,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Description of music.
         /// </value>
         [XmlIgnore]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [XmlElement(ElementName = "Description")]
         public XmlCDataSection DescriptionCData
@@ -63,7 +63,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Url of music.
         /// </value>
         [XmlIgnore]
-        public string MusicUrl { get; set; }
+        public string? MusicUrl { get; set; }
 
         [XmlElement(ElementName = "MusicUrl")]
         public XmlCDataSection MusicUrlCData
@@ -86,7 +86,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// High quality music Url.
         /// </value>
         [XmlIgnore]
-        public string HQMusicUrl { get; set; }
+        public string? HQMusicUrl { get; set; }
 
         [XmlElement(ElementName = "HQMusicUrl")]
         public XmlCDataSection HQMusicUrlCData
@@ -109,7 +109,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Thumbnail image id of the music.
         /// </value>
         [XmlIgnore]
-        public string ThumbMediaId { get; set; }
+        public string? ThumbMediaId { get; set; }
 
         [XmlElement(ElementName = "ThumbMediaId")]
         public XmlCDataSection ThumbMediaIdCData

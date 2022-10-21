@@ -10,7 +10,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
     public class Article
     {
         [XmlIgnore]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [XmlElement(ElementName = "Title")]
         public XmlCDataSection TitleCData
@@ -27,7 +27,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         }
 
         [XmlIgnore]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [XmlElement(ElementName = "Description")]
         public XmlCDataSection DescriptionCData
@@ -44,7 +44,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         }
 
         [XmlIgnore]
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
         [XmlElement(ElementName = "Url")]
         public XmlCDataSection UrlCData
@@ -67,7 +67,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Should be JPG or PNG type.
         /// </value>
         [XmlIgnore]
-        public string PicUrl { get; set; }
+        public string? PicUrl { get; set; }
 
         [XmlElement(ElementName = "PicUrl")]
         public XmlCDataSection PicUrlCData
