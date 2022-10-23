@@ -255,10 +255,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
 
             try
             {
-                StreamReader reader = new StreamReader(httpRequest.Body);
-                var content = await reader.ReadToEndAsync();
-                Console.WriteLine(content);
-
 
 
                 var wechatRequest = await GetRequestMessage(httpRequest.Body, secretInfo);
