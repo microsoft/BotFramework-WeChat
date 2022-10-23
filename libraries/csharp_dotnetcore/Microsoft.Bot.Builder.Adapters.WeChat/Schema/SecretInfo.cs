@@ -17,7 +17,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// signature from WeChat update webhook request.
         /// </value>
         [FromQuery(Name = "signature")]
-        public string WebhookSignature { get; set; } = null!;
+        public string? WebhookSignature { get; set; } 
 
         /// <summary>
         /// Gets or Sets signature from WeChat message request.
@@ -26,7 +26,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Signature from WeChat message request.
         /// </value>
         [FromQuery(Name = "msg_signature")]
-        public string MessageSignature { get; set; } = null!;
+        public string? MessageSignature { get; set; } 
 
         /// <summary>
         /// Gets or Sets echo string from WeChat message request.
@@ -35,7 +35,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Echo string from WeChat message request.
         /// </value>
         [FromQuery(Name = "echostr")]
-        public string EchoString { get; set; } = null!;
+        public string? EchoString { get; set; } 
 
         /// <summary>
         /// Gets or Sets timestamp.
@@ -44,7 +44,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Timestamp of the request parameter.
         /// </value>
         [FromQuery(Name = "timestamp")]
-        public string Timestamp { get; set; } = null!;
+        public string? Timestamp { get; set; } 
 
         /// <summary>
         /// Gets or Sets nonce.
@@ -53,6 +53,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Nonce of the request parameter.
         /// </value>
         [FromQuery(Name = "nonce")]
-        public string Nonce { get; set; } = null!;
+        public string? Nonce { get; set; } 
     }
 }

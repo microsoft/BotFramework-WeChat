@@ -51,13 +51,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         public WeChatClient(
             WeChatSettings settings,
             IStorage storage,
-            ILogger logger,
+            ILogger<WeChatClient> logger,
             IHttpClientFactory httpClientFactory)
         {
             _settings = settings;
             _attachmentStorage = new WeChatAttachmentStorage(storage);
             _tokenStorage = new AccessTokenStorage(storage);
-            _logger = logger ?? NullLogger.Instance;
+            _logger = logger;
             _attachmentHash = new AttachmentHash();
             _semaphore = new SemaphoreSlim(1);
             _httpClientFactory = httpClientFactory;

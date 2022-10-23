@@ -12,7 +12,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddWeChatAdapterWithErrorHandler(this IServiceCollection services, IConfiguration config)
         {
-            services.Configure<WeChatSettings>(config.GetSection(WeChatSettings.ConfigureItemName));
+            //services.Configure<WeChatSettings>(config.GetSection(WeChatSettings.ConfigureItemName));
+            //var weChatSetting = new WeChatSettings();
+            var weChatSetting = config.GetSection(WeChatSettings.ConfigureItemName).Get<WeChatSettings>();
+            services.AddSingleton(weChatSetting);
             services.AddSingleton<WeChatClient>();
 
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
@@ -21,5 +24,20 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services;
         }
+
+        public static IServiceCollection AddWeChatAdapterWithErrorAndTranscriptLoggerHandler(this IServiceCollection services, IConfiguration config)
+        {
+            //services.Configure<WeChatSettings>(config.GetSection(WeChatSettings.ConfigureItemName));
+            var weChatSetting = config.GetSection(WeChatSettings.ConfigureItemName).Get<WeChatSettings>();
+            services.AddSingleton(weChatSetting);
+            services.AddSingleton<WeChatClient>();
+
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<WeChatAdapterWithErrorAndTranscriptLoggerHandler>();
+
+            return services;
+        }
+
     }
 }

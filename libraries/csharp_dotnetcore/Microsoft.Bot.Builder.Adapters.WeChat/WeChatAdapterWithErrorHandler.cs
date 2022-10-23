@@ -13,7 +13,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             WeChatSettings settings,
             IStorage storage,
             IBackgroundTaskQueue taskQueue,
-            ILogger logger,
+            ILogger<WeChatAdapterWithErrorHandler> logger,
             ConversationState conversationState,
             UserState userState,
             WeChatClient chatClient)
@@ -43,7 +43,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 }
             };
 
-            this.Use(new AutoSaveStateMiddleware(conversationState, userState));
+            Use(new AutoSaveStateMiddleware(conversationState, userState));
         }
     }
 }

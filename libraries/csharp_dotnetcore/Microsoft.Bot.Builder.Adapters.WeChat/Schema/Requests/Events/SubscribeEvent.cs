@@ -26,6 +26,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// Use to get QR code picture.
         /// </value>
         [XmlElement(ElementName = "Ticket")]
-        public string Ticket { get; set; }
+        public string Ticket { get; set; } = null!;
     }
 }

@@ -41,13 +41,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                     WeChatSettings settings,
                     IStorage storage,
                     IBackgroundTaskQueue taskQueue,
-                    ILogger logger,
+                    ILogger<WeChatHttpAdapter> logger,
                     WeChatClient chatClient)
         {
             _settings = settings;
             _wechatClient = chatClient;
             _wechatMessageMapper = new WeChatMessageMapper(_wechatClient, settings.UploadTemporaryMedia, logger);
-            _logger = logger ?? NullLogger.Instance;
+            _logger = logger;
             _taskQueue = taskQueue;
         }
 
@@ -232,7 +232,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 throw new ArgumentNullException(nameof(secretInfo));
             }
 
-            if (!VerificationHelper.VerifySignature(secretInfo.WebhookSignature, secretInfo.Timestamp, secretInfo.Nonce, _settings.Token))
+            if (!VerificationHelper.VerifySignature(secretInfo.WebhookSignature!, secretInfo.Timestamp!, secretInfo.Nonce!, _settings.Token))
             {
                 throw new UnauthorizedAccessException("Signature verification failed.");
             }
@@ -255,7 +255,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
 
             try
             {
-                var wechatRequest = GetRequestMessage(httpRequest.Body, secretInfo);
+                StreamReader reader = new StreamReader(httpRequest.Body);
+                var content = await reader.ReadToEndAsync();
+                Console.WriteLine(content);
+
+
+
+                var wechatRequest = await GetRequestMessage(httpRequest.Body, secretInfo);
                 var wechatResponse = await ProcessWeChatRequest(
                                 wechatRequest,
                                 bot.OnTurnAsync,
@@ -320,38 +326,55 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="requestStream">WeChat RequestBody stream.</param>
         /// <param name="secretInfo">The secretInfo used to decrypt the message.</param>
         /// <returns>Decrypted WeChat RequestMessage instance.</returns>
-        private IRequestMessageBase GetRequestMessage(Stream requestStream, SecretInfo secretInfo)
+        private async Task<IRequestMessageBase> GetRequestMessage(Stream requestStream, SecretInfo secretInfo)
         {
-            if (requestStream.CanSeek)
+
+            using StreamReader reader = new StreamReader(requestStream);
+            var message = await reader.ReadToEndAsync();
+
+            //Console.WriteLine(message);
+
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.Async = true;
+
+            var xmlread = XmlReader.Create(new StringReader(message), settings);
+
+            var firstRoot = string.Empty;
+
+            XDocument? decryptDoc = null;
+
+            while ( await xmlread.ReadAsync() )
             {
-                requestStream.Seek(0, SeekOrigin.Begin);
-            }
-
-            using (var xr = XmlReader.Create(requestStream))
-            {
-                var postDataDocument = XDocument.Load(xr);
-
-                // decrypt xml document message and parse to message
-                var postDataStr = postDataDocument.ToString();
-                var decryptDoc = postDataDocument;
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                if (secretInfo != null
-                    && !string.IsNullOrWhiteSpace(_settings.Token)
-                    && postDataDocument.Root!.Element("Encrypt") != null
-                    && !string.IsNullOrEmpty(postDataDocument.Root.Element("Encrypt").Value))
+                if ( xmlread.IsStartElement() )
                 {
-                    var msgCrype = new MessageCryptography(secretInfo, _settings);
-                    var msgXml = msgCrype.DecryptMessage(postDataStr);
-
-                    decryptDoc = XDocument.Parse(msgXml);
+                    firstRoot = xmlread.Name.ToString();
+                    break;
                 }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-
-                var requestMessage = WeChatMessageFactory.GetRequestEntity(decryptDoc, _logger);
-
-                return requestMessage;
             }
+
+            if (secretInfo != null
+                 && !string.IsNullOrWhiteSpace(_settings.Token)
+                 && !string.IsNullOrEmpty(firstRoot) 
+                 && firstRoot.ToUpper().Equals("ENCRYPT")
+                 )
+            {
+                var msgCrype = new MessageCryptography(secretInfo, _settings);
+                var msgXml = msgCrype.DecryptMessage(message);
+
+                decryptDoc = XDocument.Parse(msgXml);
+            }
+            else
+            {
+                decryptDoc = XDocument.Parse(message);
+            }
+
+            var requestMessage = WeChatMessageFactory.GetRequestEntity(decryptDoc, _logger);
+
+            return requestMessage;
+
+
+
+
         }
 
         /// <summary>
@@ -362,7 +385,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <param name="cancellationToken">A cancellation token that can be used by other objects
         /// or threads to receive notice of cancellation.</param>
         /// <returns>WeChat response or ChannelData bot provided.</returns>
-        private async Task<object?> ProcessActivityAsync(Activity activity, BotCallbackHandler callback, CancellationToken cancellationToken = default(CancellationToken))
+        private async Task<object?> ProcessActivityAsync(Activity activity, BotCallbackHandler callback, CancellationToken cancellationToken = default)
         {
             using var context = new TurnContext(this, activity);
             try

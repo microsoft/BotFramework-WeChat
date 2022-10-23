@@ -42,7 +42,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// EncodingAESKey fixed length of 43 characters, a-z, A-Z, 0-9 a total of 62 characters selected
         /// https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318479&token=&lang=en_US.
         /// </value>
-        public string EncodingAesKey { get; set; } = null!;
+        public string? EncodingAesKey { get; set; }
 
         /// <summary>
         /// Gets or Sets WeChat app id.

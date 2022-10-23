@@ -11,6 +11,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         public override string EventType => EventTypes.SelectLocation;
 
         [XmlElement(ElementName = "SendLocationInfo")]
-        public SendLocationInfo SendLocationInfo { get; set; }
+        public SendLocationInfo SendLocationInfo { get; set; } = null!;
     }
 }

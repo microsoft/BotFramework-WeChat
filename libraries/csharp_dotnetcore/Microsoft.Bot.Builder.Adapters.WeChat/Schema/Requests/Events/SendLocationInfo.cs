@@ -14,7 +14,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// The latitude infomation.
         /// </value>
         [XmlElement(ElementName = "Location_X")]
-        public string Latitude { get; set; }
+        public string Latitude { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets Longtitude.
@@ -23,7 +23,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// The longtitude information.
         /// </value>
         [XmlElement(ElementName = "Location_Y")]
-        public string Longtitude { get; set; }
+        public string Longtitude { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets scale.
@@ -32,7 +32,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// Map zoom size information.
         /// </value>
         [XmlElement(ElementName = "Scale")]
-        public string Scale { get; set; }
+        public string Scale { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets Label.
@@ -41,7 +41,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// Geolocation information in text.
         /// </value>
         [XmlElement(ElementName = "Label")]
-        public string Label { get; set; }
+        public string Label { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets PoiName.
@@ -50,6 +50,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// POI name at Friend Zone.
         /// </value>
         [XmlElement(ElementName = "Poiname")]
-        public string PoiName { get; set; }
+        public string PoiName { get; set; } = null!;
     }
 }
