@@ -26,11 +26,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var workItem = await TaskQueue.DequeueAsync(stoppingToken).ConfigureAwait(false);
+                var workItem = await TaskQueue.DequeueAsync(stoppingToken);
 
                 try
                 {
-                    await workItem(stoppingToken).ConfigureAwait(false);
+                    await workItem(stoppingToken);
                 }
 #pragma warning disable CA1031 // Do not throw exception, you will always need the hosted service.
                 catch (Exception e)

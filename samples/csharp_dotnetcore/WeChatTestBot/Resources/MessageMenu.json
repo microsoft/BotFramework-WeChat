@@ -1,0 +1,13 @@
+{
+    "head_content": "Are you satisfied with this service?",
+    "list": [{
+            "id": 101,
+            "content": "Satisfied"
+        },
+        {
+            "id": 102,
+            "content": "NotSatisfied"
+        }
+    ],
+    "tail_content": "You are welcome to come back again."
+}

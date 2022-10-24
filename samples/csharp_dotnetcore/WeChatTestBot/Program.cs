@@ -5,6 +5,7 @@ using Microsoft.Bot.Builder.Adapters.WeChat;
 using Bot.Builder.Community.Storage.EntityFramework;
 using WeChatTestBot.Bots;
 using Microsoft.Extensions.Logging;
+using WeChatTestBot.Dialogs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,11 +33,13 @@ builder.Services.AddSingleton<ITranscriptStore>(TranscriptStorageLogger);
 
 
 
-
 builder.Services.AddWeChatAdapterWithErrorAndTranscriptLoggerHandler(builder.Configuration);
 
 
-builder.Services.AddTransient<IBot, TestBot>();
+builder.Services.AddSingleton<MainDialog>();
+
+
+builder.Services.AddTransient<IBot, RichCardsBot>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

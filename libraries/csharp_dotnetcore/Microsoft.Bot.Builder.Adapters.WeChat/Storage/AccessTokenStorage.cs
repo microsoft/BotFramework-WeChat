@@ -24,12 +24,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
         {
             try
             {
-                await _semaphore!.WaitAsync().ConfigureAwait(false);
+                await _semaphore!.WaitAsync();
                 var dict = new Dictionary<string, object>
                 {
                     { key, value },
                 };
-                await _storage.WriteAsync(dict, cancellationToken).ConfigureAwait(false);
+                await _storage.WriteAsync(dict, cancellationToken);
             }
             finally
             {
@@ -41,9 +41,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
         {
             try
             {
-                await _semaphore!.WaitAsync().ConfigureAwait(false);
+                await _semaphore!.WaitAsync();
                 var keys = new string[] { key };
-                var result = await _storage.ReadAsync<WeChatAccessToken>(keys, cancellationToken).ConfigureAwait(false);
+                var result = await _storage.ReadAsync<WeChatAccessToken>(keys, cancellationToken);
                 result.TryGetValue(key, out var wechatResult);
 
                 if (IfTokenExpired(wechatResult!))
@@ -63,9 +63,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Storage
         {
             try
             {
-                await _semaphore!.WaitAsync().ConfigureAwait(false);
+                await _semaphore!.WaitAsync();
                 var keys = new string[] { key };
-                await _storage.DeleteAsync(keys, cancellationToken).ConfigureAwait(false);
+                await _storage.DeleteAsync(keys, cancellationToken);
             }
             finally
             {

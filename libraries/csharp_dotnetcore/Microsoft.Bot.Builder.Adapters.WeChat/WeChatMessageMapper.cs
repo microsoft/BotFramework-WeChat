@@ -100,7 +100,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 var attachment = new Attachment
                 {
                     ContentType = MimeTypesMap.GetMimeType(voiceRequest.Format) ?? MediaTypes.Voice,
-                    ContentUrl = await _wechatClient.GetMediaUrlAsync(voiceRequest.MediaId).ConfigureAwait(false),
+                    ContentUrl = await _wechatClient.GetMediaUrlAsync(voiceRequest.MediaId),
                 };
                 activity.Attachments.Add(attachment);
             }
@@ -110,8 +110,8 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 {
                     // video request don't have format, type will be value.
                     ContentType = MediaTypes.Video,
-                    ContentUrl = await _wechatClient.GetMediaUrlAsync(videoRequest.MediaId).ConfigureAwait(false),
-                    ThumbnailUrl = await _wechatClient.GetMediaUrlAsync(videoRequest.ThumbMediaId).ConfigureAwait(false),
+                    ContentUrl = await _wechatClient.GetMediaUrlAsync(videoRequest.MediaId),
+                    ThumbnailUrl = await _wechatClient.GetMediaUrlAsync(videoRequest.ThumbMediaId),
                 };
                 activity.Attachments.Add(attachment);
             }
@@ -120,8 +120,8 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 var attachment = new Attachment
                 {
                     ContentType = MediaTypes.Video,
-                    ContentUrl = await _wechatClient.GetMediaUrlAsync(shortVideoRequest.MediaId).ConfigureAwait(false),
-                    ThumbnailUrl = await _wechatClient.GetMediaUrlAsync(shortVideoRequest.ThumbMediaId).ConfigureAwait(false),
+                    ContentUrl = await _wechatClient.GetMediaUrlAsync(shortVideoRequest.MediaId),
+                    ThumbnailUrl = await _wechatClient.GetMediaUrlAsync(shortVideoRequest.ThumbMediaId),
                 };
                 activity.Attachments.Add(attachment);
             }
@@ -170,19 +170,19 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                         IList<IResponseMessageBase> attachmentResponses = new List<IResponseMessageBase>();
                         if (attachment.ContentType == AdaptiveCard.ContentType || attachment.ContentType == "application/adaptive-card")
                         {
-                            attachmentResponses = await ProcessAdaptiveCardAsync(messageActivity, attachment).ConfigureAwait(false);
+                            attachmentResponses = await ProcessAdaptiveCardAsync(messageActivity, attachment);
                         }
                         else if (attachment.ContentType == AudioCard.ContentType)
                         {
-                            attachmentResponses = await ProcessAudioCardAsync(messageActivity, attachment).ConfigureAwait(false);
+                            attachmentResponses = await ProcessAudioCardAsync(messageActivity, attachment);
                         }
                         else if (attachment.ContentType == AnimationCard.ContentType)
                         {
-                            attachmentResponses = await ProcessAnimationCardAsync(messageActivity, attachment).ConfigureAwait(false);
+                            attachmentResponses = await ProcessAnimationCardAsync(messageActivity, attachment);
                         }
                         else if (attachment.ContentType == HeroCard.ContentType)
                         {
-                            attachmentResponses = await ProcessHeroCardAsync(messageActivity, attachment).ConfigureAwait(false);
+                            attachmentResponses = await ProcessHeroCardAsync(messageActivity, attachment);
                         }
                         else if (attachment.ContentType == ThumbnailCard.ContentType)
                         {
@@ -202,14 +202,14 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                         }
                         else if (attachment.ContentType == VideoCard.ContentType)
                         {
-                            attachmentResponses = await ProcessVideoCardAsync(messageActivity, attachment).ConfigureAwait(false);
+                            attachmentResponses = await ProcessVideoCardAsync(messageActivity, attachment);
                         }
                         else if (attachment != null &&
                                     (!string.IsNullOrEmpty(attachment.ContentUrl) ||
                                      attachment.Content != null ||
                                      !string.IsNullOrEmpty(attachment.ThumbnailUrl)))
                         {
-                            attachmentResponses = await ProcessAttachmentAsync(messageActivity, attachment).ConfigureAwait(false);
+                            attachmentResponses = await ProcessAttachmentAsync(messageActivity, attachment);
                         }
                         else
                         {
@@ -536,18 +536,18 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
 
             if (!string.IsNullOrEmpty(attachment.ThumbnailUrl))
             {
-                responseList.Add(await MediaContentToWeChatResponse(activity, attachment.Name, attachment.ThumbnailUrl, attachment.ContentType).ConfigureAwait(false));
+                responseList.Add(await MediaContentToWeChatResponse(activity, attachment.Name, attachment.ThumbnailUrl, attachment.ContentType));
             }
 
             if (!string.IsNullOrEmpty(attachment.ContentUrl))
             {
-                responseList.Add(await MediaContentToWeChatResponse(activity, attachment.Name, attachment.ContentUrl, attachment.ContentType).ConfigureAwait(false));
+                responseList.Add(await MediaContentToWeChatResponse(activity, attachment.Name, attachment.ContentUrl, attachment.ContentType));
             }
 
             if (AttachmentHelper.IsUrl(attachment.Content))
             {
 #pragma warning disable CS8604 // Possible null reference argument.
-                responseList.Add(await MediaContentToWeChatResponse(activity, attachment.Name, attachment.Content.ToString(), attachment.ContentType).ConfigureAwait(false));
+                responseList.Add(await MediaContentToWeChatResponse(activity, attachment.Name, attachment.Content.ToString(), attachment.ContentType));
 #pragma warning restore CS8604 // Possible null reference argument.
             }
             else if (attachment.Content != null)
@@ -591,7 +591,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             foreach (var image in heroCard.Images)
             {
                 // MP news image is required and can not be a temporary media.
-                var mediaMessage = await MediaContentToWeChatResponse(activity, image.Alt, image.Url, MediaTypes.Image).ConfigureAwait(false);
+                var mediaMessage = await MediaContentToWeChatResponse(activity, image.Alt, image.Url, MediaTypes.Image);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8601 // Possible null reference assignment.
                 news.ThumbMediaId = (mediaMessage as ImageResponse).Image.MediaId;
@@ -627,13 +627,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
                 var renderer = new AdaptiveCardRenderer();
                 var schemaVersion = renderer.SupportedSchemaVersion;
                 var converImageUrl = adaptiveCard.AdditionalProperties[CoverImageUrlKey].ToString();
-                var attachmentData = await CreateAttachmentDataAsync(title ?? activity.Text, converImageUrl!, MediaTypes.Image).ConfigureAwait(false);
-                var thumbMediaId = (await _wechatClient.UploadMediaAsync(attachmentData, false).ConfigureAwait(false)).MediaId;
+                var attachmentData = await CreateAttachmentDataAsync(title ?? activity.Text, converImageUrl!, MediaTypes.Image);
+                var thumbMediaId = (await _wechatClient.UploadMediaAsync(attachmentData, false)).MediaId;
 
                 // Replace all image URL to WeChat acceptable URL
                 foreach (var element in adaptiveCard.Body)
                 {
-                    await ReplaceAdaptiveImageUri(element).ConfigureAwait(false);
+                    await ReplaceAdaptiveImageUri(element);
                 }
 
                 // Render the card
@@ -677,8 +677,8 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         {
             if (element is AdaptiveImage adaptiveImage)
             {
-                var attachmentData = await CreateAttachmentDataAsync(adaptiveImage.AltText ?? adaptiveImage.Id, adaptiveImage.Url.AbsoluteUri, adaptiveImage.Type).ConfigureAwait(false);
-                var uploadResult = await _wechatClient.UploadNewsImageAsync(attachmentData).ConfigureAwait(false) as UploadPersistentMediaResult;
+                var attachmentData = await CreateAttachmentDataAsync(adaptiveImage.AltText ?? adaptiveImage.Id, adaptiveImage.Url.AbsoluteUri, adaptiveImage.Type);
+                var uploadResult = await _wechatClient.UploadNewsImageAsync(attachmentData) as UploadPersistentMediaResult;
                 adaptiveImage.Url = new Uri(uploadResult!.Url);
                 return;
             }
@@ -687,21 +687,21 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             {
                 foreach (var image in imageSet.Images)
                 {
-                    await ReplaceAdaptiveImageUri(image).ConfigureAwait(false);
+                    await ReplaceAdaptiveImageUri(image);
                 }
             }
             else if (element is AdaptiveContainer container)
             {
                 foreach (var item in container.Items)
                 {
-                    await ReplaceAdaptiveImageUri(item).ConfigureAwait(false);
+                    await ReplaceAdaptiveImageUri(item);
                 }
             }
             else if (element is AdaptiveColumnSet columnSet)
             {
                 foreach (var item in columnSet.Columns)
                 {
-                    await ReplaceAdaptiveImageUri(item).ConfigureAwait(false);
+                    await ReplaceAdaptiveImageUri(item);
                 }
             }
         }
@@ -726,13 +726,13 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             // Add image
             if (!string.IsNullOrEmpty(animationCard.Image?.Url))
             {
-                messages.Add(await MediaContentToWeChatResponse(activity, animationCard.Image.Alt, animationCard.Image.Url, MediaTypes.Image).ConfigureAwait(false));
+                messages.Add(await MediaContentToWeChatResponse(activity, animationCard.Image.Alt, animationCard.Image.Url, MediaTypes.Image));
             }
 
             // Add mediaUrls
             foreach (var mediaUrl in animationCard.Media ?? new List<MediaUrl>())
             {
-                messages.Add(await MediaContentToWeChatResponse(activity, mediaUrl.Profile, mediaUrl.Url, MediaTypes.Image).ConfigureAwait(false));
+                messages.Add(await MediaContentToWeChatResponse(activity, mediaUrl.Profile, mediaUrl.Url, MediaTypes.Image));
             }
 
             // Add buttons
@@ -753,10 +753,10 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             var adaptiveCard = attachment.ContentAs<AdaptiveCard>();
             try
             {
-                var news = await CreateNewsFromAdaptiveCard(activity, adaptiveCard, attachment.Name).ConfigureAwait(false);
+                var news = await CreateNewsFromAdaptiveCard(activity, adaptiveCard, attachment.Name);
 
                 // TODO: Upload news image must be persistent media.
-                var uploadResult = await _wechatClient.UploadNewsAsync(new News[] { news }, false).ConfigureAwait(false);
+                var uploadResult = await _wechatClient.UploadNewsAsync(new News[] { news }, false);
                 var mpnews = new MPNewsResponse(activity.From.Id, activity.Recipient.Id, uploadResult.MediaId);
                 messages.Add(mpnews);
             }
@@ -781,8 +781,8 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         {
             var messages = new List<IResponseMessageBase>();
             var heroCard = attachment.ContentAs<HeroCard>();
-            var news = await CreateNewsFromHeroCard(activity, heroCard).ConfigureAwait(false);
-            var uploadResult = await _wechatClient.UploadNewsAsync(new News[] { news }, _uploadTemporaryMedia).ConfigureAwait(false);
+            var news = await CreateNewsFromHeroCard(activity, heroCard);
+            var uploadResult = await _wechatClient.UploadNewsAsync(new News[] { news }, _uploadTemporaryMedia);
             var mpnews = new MPNewsResponse(activity.From.Id, activity.Recipient.Id, uploadResult.MediaId);
             messages.Add(mpnews);
             messages.AddRange(ProcessCardActions(activity, heroCard.Buttons));
@@ -809,7 +809,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             if (!string.IsNullOrEmpty(videoCard.Image?.Url))
             {
                 // TODO: WeChat doc have thumb_media_id for video mesasge, but not implemented in current package.
-                var reponseList = await MediaContentToWeChatResponse(activity, videoCard.Title, videoCard.Media[0].Url, MediaTypes.Video).ConfigureAwait(false);
+                var reponseList = await MediaContentToWeChatResponse(activity, videoCard.Title, videoCard.Media[0].Url, MediaTypes.Video);
                 if (reponseList is VideoResponse videoResponse)
                 {
                     video = new Video(videoResponse.Video.MediaId!, videoCard.Title, body);
@@ -847,7 +847,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             // upload thumbnail image.
             if (!string.IsNullOrEmpty(audioCard.Image?.Url))
             {
-                var reponseList = await MediaContentToWeChatResponse(activity, audioCard.Image.Alt, audioCard.Image.Url, MediaTypes.Image).ConfigureAwait(false);
+                var reponseList = await MediaContentToWeChatResponse(activity, audioCard.Image.Alt, audioCard.Image.Url, MediaTypes.Image);
                 if (reponseList is ImageResponse imageResponse)
                 {
                     music.ThumbMediaId = imageResponse.Image.MediaId;
@@ -871,10 +871,10 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <returns>WeChat response message.</returns>
         private async Task<IResponseMessageBase> MediaContentToWeChatResponse(IMessageActivity activity, string name, string content, string contentType)
         {
-            var attachmentData = await CreateAttachmentDataAsync(name, content, contentType).ConfigureAwait(false);
+            var attachmentData = await CreateAttachmentDataAsync(name, content, contentType);
 
             // document said mp news should not use temp media_id, but is working actually.
-            var uploadResult = await _wechatClient.UploadMediaAsync(attachmentData, _uploadTemporaryMedia).ConfigureAwait(false);
+            var uploadResult = await _wechatClient.UploadMediaAsync(attachmentData, _uploadTemporaryMedia);
             return CreateMediaResponse(activity, uploadResult.MediaId, attachmentData.Type);
         }
 
@@ -901,7 +901,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             byte[] bytesData;
             if (AttachmentHelper.IsUrl(content))
             {
-                bytesData = await _wechatClient.SendHttpRequestAsync(HttpMethod.Get, content, timeout: 60000).ConfigureAwait(false);
+                bytesData = await _wechatClient.SendHttpRequestAsync(HttpMethod.Get, content, timeout: 60000);
             }
             else
             {

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeChatTestBot", "WeChatTestBot.csproj", "{B45F9151-9B81-409A-86E2-C4F71C413811}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Builder.Community.Storage.EntityFramework", "..\..\..\..\botbuilder-community-dotnet\libraries\Bot.Builder.Community.Storage.EntityFramework\Bot.Builder.Community.Storage.EntityFramework.csproj", "{05127F4A-2222-48FE-9FF5-D63740D033E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Bot.Builder.Adapters.WeChat", "..\..\..\libraries\csharp_dotnetcore\Microsoft.Bot.Builder.Adapters.WeChat\Microsoft.Bot.Builder.Adapters.WeChat.csproj", "{452D56B1-FD16-4E8F-99FF-1C7195D6FAE8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B45F9151-9B81-409A-86E2-C4F71C413811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B45F9151-9B81-409A-86E2-C4F71C413811}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B45F9151-9B81-409A-86E2-C4F71C413811}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B45F9151-9B81-409A-86E2-C4F71C413811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05127F4A-2222-48FE-9FF5-D63740D033E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05127F4A-2222-48FE-9FF5-D63740D033E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05127F4A-2222-48FE-9FF5-D63740D033E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05127F4A-2222-48FE-9FF5-D63740D033E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{452D56B1-FD16-4E8F-99FF-1C7195D6FAE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{452D56B1-FD16-4E8F-99FF-1C7195D6FAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{452D56B1-FD16-4E8F-99FF-1C7195D6FAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{452D56B1-FD16-4E8F-99FF-1C7195D6FAE8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5D2AC3EF-7ECA-4A1E-8FEF-F0D4A13D1D7D}
+	EndGlobalSection
+EndGlobal
