@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -23,7 +24,7 @@ namespace WeChatTestBot.Bots
     {
         private readonly BotState _conversationState;
         private readonly Dialog _dialog;
-        private readonly ILogger _logger;
+        private readonly ILogger<DialogBot<T>> _logger;
         private readonly BotState _userState;
 
         public DialogBot(ConversationState conversationState, UserState userState, T dialog, ILogger<DialogBot<T>> logger)
@@ -36,9 +37,10 @@ namespace WeChatTestBot.Bots
 
         public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var echo = turnContext.Activity.CreateReply();
-            echo.Text = "Echo: " + turnContext.Activity.Text;
-            await turnContext.SendActivityAsync(echo);
+            //var echo = turnContext.Activity.CreateReply();
+            //echo.Text = "Echo: " + turnContext.Activity.Text;
+            //await turnContext.SendActivityAsync(echo);
+
             var clickEvent = turnContext.Activity.ChannelData as ClickEvent;
             var baseEvent = turnContext.Activity.ChannelData as RequestEvent;
             var locationEvent = turnContext.Activity.ChannelData as LocationRequest;
@@ -65,9 +67,26 @@ namespace WeChatTestBot.Bots
             }
             else if (baseEvent != null)
             {
-                var reply = turnContext.Activity.CreateReply();
-                reply.Text = JsonConvert.SerializeObject(baseEvent);
-                await turnContext.SendActivityAsync(reply);
+
+                if ( baseEvent.EventType.ToLower().Equals("subscribe") )
+                {
+                    var reply = turnContext.Activity.CreateReply();
+
+                    var heroCard = new HeroCard
+                    {
+                        Title = "BotFramework Hero Card",
+                        Subtitle = "Microsoft Bot Framework",
+                        Text = "Build and connect intelligent bots to interact with your users naturally wherever they are," +
+            " from text/sms to Skype, Slack, Office 365 mail and other popular services.",
+                        Images = new List<CardImage> { new CardImage("https://learn.microsoft.com/en-us/azure/bot-service/media/quickstart/emulator-hello-echo.png?view=azure-bot-service-4.0") },
+                        Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Get Started", value: "https://docs.microsoft.com/bot-framework") },
+                    };
+
+                    reply.Attachments.Add(heroCard.ToAttachment());
+
+                    await turnContext.SendActivityAsync(reply);
+                }
+
             }
             else if (imageRequest != null)
             {
@@ -92,6 +111,9 @@ namespace WeChatTestBot.Bots
                 await base.OnTurnAsync(turnContext, cancellationToken);
             }
         }
+
+
+
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {

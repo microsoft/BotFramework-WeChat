@@ -33,7 +33,7 @@ namespace WeChatTestBot
                 Subtitle = "Microsoft Bot Framework",
                 Text = "Build and connect intelligent bots to interact with your users naturally wherever they are," +
                        " from text/sms to Skype, Slack, Office 365 mail and other popular services.",
-                Images = new List<CardImage> { new CardImage("https://sec.ch9.ms/ch9/7ff5/e07cfef0-aa3b-40bb-9baa-7c9ef8ff7ff5/buildreactionbotframework_960.jpg") },
+                Images = new List<CardImage> { new CardImage("https://learn.microsoft.com/en-us/azure/bot-service/media/quickstart/emulator-hello-echo.png?view=azure-bot-service-4.0") },
                 Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Get Started", value: "https://docs.microsoft.com/bot-framework") },
             };
 

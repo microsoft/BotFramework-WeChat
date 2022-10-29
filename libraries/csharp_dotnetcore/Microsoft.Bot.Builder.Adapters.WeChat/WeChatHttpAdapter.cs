@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -325,7 +326,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         private async Task<IRequestMessageBase> GetRequestMessage(Stream requestStream, SecretInfo secretInfo)
         {
 
-            using StreamReader reader = new StreamReader(requestStream);
+            using StreamReader reader = new StreamReader(requestStream, encoding: Encoding.UTF8);
             var message = await reader.ReadToEndAsync();
 
             //Console.WriteLine(message);
