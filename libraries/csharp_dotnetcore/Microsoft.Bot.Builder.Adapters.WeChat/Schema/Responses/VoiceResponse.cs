@@ -39,11 +39,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Responses
 
             set
             {
-                MsgType = value.Value;
+                MsgType = value.Value!;
             }
         }
 
         [XmlElement(ElementName = "Voice")]
-        public Voice Voice { get; set; }
+        public Voice Voice { get; set; } = null!;
     }
 }

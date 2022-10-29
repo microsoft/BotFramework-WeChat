@@ -12,6 +12,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         public int Count { get; set; }
 
         [XmlElement(ElementName = "PicList")]
-        public List<PicItem> PicList { get; set; }
+        public List<PicItem> PicList { get; set; } = null!;
     }
 }

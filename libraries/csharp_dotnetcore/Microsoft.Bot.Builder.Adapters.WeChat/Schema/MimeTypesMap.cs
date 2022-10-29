@@ -203,7 +203,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// </summary>
         /// <param name="fileName">The file name.</param>
         /// <returns>file mimetype.</returns>
-        public static string GetMimeType(string fileName)
+        public static string? GetMimeType(string fileName)
         {
             var ext = fileName;
             var index = ext.LastIndexOf('.');

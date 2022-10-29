@@ -19,7 +19,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         }
 
         [XmlIgnore]
-        public string MediaId { get; set; }
+        public string? MediaId { get; set; }
 
         [XmlElement(ElementName = "MediaId")]
         public XmlCDataSection MediaIdCData

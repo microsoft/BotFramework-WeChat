@@ -8,9 +8,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
     public class ScanCodeInfo
     {
         [XmlElement(ElementName = "ScanType")]
-        public string ScanType { get; set; }
+        public string ScanType { get; set; } = null!;
 
         [XmlElement(ElementName = "ScanResult")]
-        public string ScanResult { get; set; }
+        public string ScanResult { get; set; } = null!;
     }
 }

@@ -12,14 +12,14 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
             ExpireTime = DateTimeOffset.MinValue;
         }
 
-        public string AppId { get; set; }
+        public string AppId { get; set; } = null!;
 
-        public string Token { get; set; }
+        public string Token { get; set; } = null!;
 
-        public string Secret { get; set; }
+        public string Secret { get; set; } = null!;
 
         public DateTimeOffset ExpireTime { get; set; }
 
-        public string ETag { get; set; }
+        public string ETag { get; set; } = null!;
     }
 }

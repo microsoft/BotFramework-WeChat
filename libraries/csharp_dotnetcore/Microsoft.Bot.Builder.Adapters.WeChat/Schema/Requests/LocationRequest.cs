@@ -44,6 +44,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         /// Geolocation information in text.
         /// </value>
         [XmlElement(ElementName = "Label")]
-        public string Label { get; set; }
+        public string Label { get; set; } = null!;
     }
 }

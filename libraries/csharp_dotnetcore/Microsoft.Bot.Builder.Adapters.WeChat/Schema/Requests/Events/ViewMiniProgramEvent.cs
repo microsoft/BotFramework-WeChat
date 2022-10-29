@@ -11,6 +11,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         public override string EventType => EventTypes.ViewMiniProgram;
 
         [XmlElement(ElementName = "MenuId")]
-        public string MenuId { get; set; }
+        public string MenuId { get; set; } = null!;
     }
 }

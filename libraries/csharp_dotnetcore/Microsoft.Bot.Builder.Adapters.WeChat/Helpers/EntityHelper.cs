@@ -32,10 +32,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Helpers
                 var serializer = new XmlSerializer(typeof(T));
                 using (var reader = doc.CreateReader())
                 {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                     requestMessage = (T)serializer.Deserialize(reader);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                 }
 
-                return requestMessage;
+                return requestMessage!;
             }
             catch (Exception e)
             {

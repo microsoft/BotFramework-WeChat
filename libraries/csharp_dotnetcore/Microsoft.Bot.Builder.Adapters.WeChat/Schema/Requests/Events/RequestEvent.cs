@@ -14,10 +14,10 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// The event type, should be one of EventType.
         /// </value>
         [XmlElement(ElementName = "Event")]
-        public virtual string EventType { get; }
+        public virtual string EventType { get; } = null!;
 
         [XmlElement(ElementName = "Encrypt")]
-        public string Encrypt { get; set; }
+        public string Encrypt { get; set; } = null!;
 
         /// <summary>
         /// Gets event message type.
@@ -34,7 +34,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// Recipient openId.
         /// </value>
         [XmlElement(ElementName = "ToUserName")]
-        public string ToUserName { get; set; }
+        public string ToUserName { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets FromUserName.
@@ -43,7 +43,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// Sender openId.
         /// </value>
         [XmlElement(ElementName = "FromUserName")]
-        public string FromUserName { get; set; }
+        public string FromUserName { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets CreateTime.

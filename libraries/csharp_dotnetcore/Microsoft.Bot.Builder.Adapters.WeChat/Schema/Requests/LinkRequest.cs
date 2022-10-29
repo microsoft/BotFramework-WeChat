@@ -14,12 +14,12 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         public override string MsgType => RequestMessageTypes.Link;
 
         [XmlElement(ElementName = "Title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         [XmlElement(ElementName = "Description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         [XmlElement(ElementName = "Url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = null!;
     }
 }

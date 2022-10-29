@@ -11,7 +11,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         public override string EventType => EventTypes.TemplateSendFinished;
 
         [XmlElement(ElementName = "Status")]
-        public string Status { get; set; }
+        public string Status { get; set; } = null!;
 
         [XmlElement(ElementName = "MsgID")]
         public long MsgID { get; set; }

@@ -11,9 +11,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests
         public override string MsgType => RequestMessageTypes.Text;
 
         [XmlElement(ElementName = "Content")]
-        public string Content { get; set; }
+        public string Content { get; set; } = null!;
 
         [XmlElement(ElementName = "bizmsgmenuid")]
-        public string Bizmsgmenuid { get; set; }
+        public string Bizmsgmenuid { get; set; } = null!;
     }
 }

@@ -11,6 +11,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         public override string EventType => EventTypes.WeChatAlbum;
 
         [XmlElement(ElementName = "SendPicsInfo")]
-        public SendPicsInfo SendPicsInfo { get; set; }
+        public SendPicsInfo SendPicsInfo { get; set; } = null!;
     }
 }

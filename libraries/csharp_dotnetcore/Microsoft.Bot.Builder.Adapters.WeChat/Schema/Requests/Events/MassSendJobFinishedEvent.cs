@@ -26,7 +26,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// Status code.
         /// </value>
         [XmlElement(ElementName = "Status")]
-        public string Status { get; set; }
+        public string Status { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets TotalCount.
@@ -75,6 +75,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         public long MsgID { get; set; }
 
         // [XmlElement(ElementName = "CopyrightCheckResult")]
-        public CopyrightCheckResult CopyrightCheckResult { get; set; }
+        public CopyrightCheckResult CopyrightCheckResult { get; set; } = null!;
     }
 }

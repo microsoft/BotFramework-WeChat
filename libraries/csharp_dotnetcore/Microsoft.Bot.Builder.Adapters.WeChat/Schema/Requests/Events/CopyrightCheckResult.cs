@@ -23,7 +23,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// <value>
         /// Single artile check result.
         /// </value>
-        public ResultList ResultList { get; set; }
+        public ResultList ResultList { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets CheckState.

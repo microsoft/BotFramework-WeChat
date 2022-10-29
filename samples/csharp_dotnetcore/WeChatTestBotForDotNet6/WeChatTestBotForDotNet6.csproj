@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\botbuilder-community-dotnet\libraries\Bot.Builder.Community.Storage.EntityFramework\Bot.Builder.Community.Storage.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\..\libraries\csharp_dotnetcore\Microsoft.Bot.Builder.Adapters.WeChat\Microsoft.Bot.Builder.Adapters.WeChat.csproj" />
+  </ItemGroup>
+
+</Project>

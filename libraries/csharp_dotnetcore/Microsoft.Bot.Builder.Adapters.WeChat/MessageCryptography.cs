@@ -39,9 +39,9 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             _token = settings.Token;
             _appId = settings.AppId;
             _encodingAesKey = settings.EncodingAesKey;
-            _msgSignature = secretInfo.MessageSignature;
-            _timestamp = secretInfo.Timestamp;
-            _nonce = secretInfo.Nonce;
+            _msgSignature = secretInfo.MessageSignature!;
+            _timestamp = secretInfo.Timestamp!;
+            _nonce = secretInfo.Nonce!;
         }
 
         /// <summary>

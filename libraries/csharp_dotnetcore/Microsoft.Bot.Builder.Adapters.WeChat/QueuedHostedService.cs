@@ -14,10 +14,10 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
     {
         private readonly ILogger _logger;
 
-        public QueuedHostedService(IBackgroundTaskQueue backgroundTaskQueue, ILogger logger = null)
+        public QueuedHostedService(IBackgroundTaskQueue backgroundTaskQueue, ILogger<QueuedHostedService> logger)
         {
             TaskQueue = backgroundTaskQueue;
-            _logger = logger ?? NullLogger.Instance;
+            _logger = logger;
         }
 
         public IBackgroundTaskQueue TaskQueue { get; }
@@ -26,11 +26,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var workItem = await TaskQueue.DequeueAsync(stoppingToken).ConfigureAwait(false);
+                var workItem = await TaskQueue.DequeueAsync(stoppingToken);
 
                 try
                 {
-                    await workItem(stoppingToken).ConfigureAwait(false);
+                    await workItem(stoppingToken);
                 }
 #pragma warning disable CA1031 // Do not throw exception, you will always need the hosted service.
                 catch (Exception e)

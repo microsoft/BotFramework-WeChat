@@ -9,10 +9,10 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.JsonResults
     public class UploadTemporaryMediaResult : UploadMediaResult
     {
         [JsonProperty("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = null!;
 
         [JsonProperty("thumb_media_id")]
-        public string ThumbMediaId { get; set; }
+        public string ThumbMediaId { get; set; } = null!;
 
         [JsonProperty("created_at")]
         public long CreatedAt { get; set; }

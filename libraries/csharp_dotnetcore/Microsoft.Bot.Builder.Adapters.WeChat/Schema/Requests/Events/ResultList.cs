@@ -10,6 +10,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
     public class ResultList
     {
         [XmlElement(ElementName = "item")]
-        public List<ResultListItem> Items { get; set; }
+        public List<ResultListItem> Items { get; set; } = null!;
     }
 }

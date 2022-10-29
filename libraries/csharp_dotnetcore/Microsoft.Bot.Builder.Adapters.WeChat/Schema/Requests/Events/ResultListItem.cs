@@ -42,7 +42,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
         /// Url of Similar orginal artile.
         /// </value>
         [XmlElement(ElementName = "OriginalArticleUrl")]
-        public string OriginalArticleUrl { get; set; }
+        public string OriginalArticleUrl { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets OriginalArticleType.

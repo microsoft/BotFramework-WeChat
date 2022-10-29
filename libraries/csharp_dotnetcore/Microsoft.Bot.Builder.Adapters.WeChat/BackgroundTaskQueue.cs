@@ -11,7 +11,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
     public class BackgroundTaskQueue : IBackgroundTaskQueue, IDisposable
     {
         private readonly ConcurrentQueue<Func<CancellationToken, Task>> _workItems = new ConcurrentQueue<Func<CancellationToken, Task>>();
-        private SemaphoreSlim _signal = new SemaphoreSlim(0);
+        private SemaphoreSlim? _signal = new SemaphoreSlim(0);
 
         /// <summary>
         /// Queue a Task to background task queue.
@@ -25,7 +25,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
             }
 
             _workItems.Enqueue(workItem);
-            _signal.Release();
+            _signal!.Release();
         }
 
         /// <summary>
@@ -35,11 +35,11 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat
         /// <returns>A <see cref="Task"/> representing the dequeue operation.</returns>
         public async Task<Func<CancellationToken, Task>> DequeueAsync(CancellationToken token)
         {
-            await _signal.WaitAsync(token).ConfigureAwait(false);
+            await _signal!.WaitAsync(token);
 
             _workItems.TryDequeue(out var workItem);
 
-            return workItem;
+            return workItem!;
         }
 
         public void Dispose()

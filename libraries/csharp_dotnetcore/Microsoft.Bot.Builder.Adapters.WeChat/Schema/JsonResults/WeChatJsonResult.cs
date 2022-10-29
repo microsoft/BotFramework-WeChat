@@ -24,7 +24,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.JsonResults
         /// Error message from WeChat, default is 'ok'.
         /// </value>
         [JsonProperty("errmsg")]
-        public virtual string ErrorMessage { get; set; }
+        public virtual string ErrorMessage { get; set; } = null!;
 
         public override string ToString() => string.Format(CultureInfo.InvariantCulture, "WeChatJsonResult: {{ErrorCode:'{0}', ErrorMessage:'{1}'}}", ErrorCode, ErrorMessage);
     }

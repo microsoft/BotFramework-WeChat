@@ -9,7 +9,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.JsonResults
     public class AccessTokenResult : WeChatJsonResult
     {
         [JsonProperty("access_token")]
-        public string Token { get; set; }
+        public string Token { get; set; } = null!;
 
         [JsonProperty("expires_in")]
         public int ExpireIn { get; set; }

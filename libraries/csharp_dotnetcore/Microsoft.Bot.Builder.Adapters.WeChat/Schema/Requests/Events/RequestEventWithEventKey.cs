@@ -11,6 +11,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
     public abstract class RequestEventWithEventKey : RequestEvent
     {
         [XmlElement(ElementName = "EventKey")]
-        public string EventKey { get; set; }
+        public string EventKey { get; set; } = null!;
     }
 }

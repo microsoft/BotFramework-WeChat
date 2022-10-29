@@ -8,6 +8,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema.Requests.Events
     public class PicItem
     {
         [XmlElement(ElementName = "item")]
-        public MD5Sum Item { get; set; }
+        public MD5Sum Item { get; set; } = null!;
     }
 }

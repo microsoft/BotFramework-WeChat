@@ -14,7 +14,7 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Id of the menu item.
         /// </value>
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets Content.
@@ -23,6 +23,6 @@ namespace Microsoft.Bot.Builder.Adapters.WeChat.Schema
         /// Content of the menu item.
         /// </value>
         [JsonProperty("content")]
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }
