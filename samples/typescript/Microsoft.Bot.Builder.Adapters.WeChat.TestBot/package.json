@@ -15,7 +15,7 @@
         "watch": "nodemon --watch ./src -e ts --exec \"npm run start\""
     },
     "dependencies": {
-        "botbuilder": "^4.5.3",
+        "botbuilder": "^4.19.3",
         "botbuilder-dialogs": "^4.5.3",
         "botframework-wechat": "file:../../../libraries/typescript/Microsoft.Bot.Builder.Adapters.WeChat",
         "dotenv": "^8.2.0",
